@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu, dialog } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -12,7 +12,6 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
     }
@@ -25,11 +24,75 @@ function createWindow() {
   } else {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
+  const menuTemplate = [
+    {
+      label: "File",
+      submenu: [
+        {
+          label: "New",
+          accelerator: "CmdOrCtrl+N",
+          click: () => {
+            console.log("New file clicked");
+          }
+        },
+        {
+          label: "Open file",
+          accelerator: "CmdOrCtrl+O",
+          click: async () => {
+            const filePath = await getPath("file");
+            console.log(filePath);
+          }
+        },
+        {
+          label: "Open folder",
+          accelerator: "CmdOrCtrl+1",
+          click: async () => {
+            const folderPath = await getPath("folder");
+            console.log(folderPath);
+          }
+        },
+        {
+          label: "Save",
+          accelerator: "CmdOrCtrl+S",
+          click: () => {
+            console.log("Save clicked");
+          }
+        },
+        { type: "separator" },
+        {
+          label: "Exit",
+          click: () => {
+            app.quit();
+          }
+        }
+      ]
+    }
+  ];
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
 }
+async function getPath(type) {
+  let result;
+  try {
+    if (type === "file") {
+      result = await dialog.showOpenDialog({
+        properties: ["openFile"]
+      });
+    } else if (type === "folder") {
+      result = await dialog.showOpenDialog({
+        properties: ["openDirectory"]
+      });
+    }
+    return result && result.filePaths.length > 0 ? result.filePaths[0] : void 0;
+  } catch (error) {
+    console.error(`Error detected in ${type}`, error);
+    return void 0;
+  }
+}
+app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
-    win = null;
   }
 });
 app.on("activate", () => {
@@ -37,7 +100,6 @@ app.on("activate", () => {
     createWindow();
   }
 });
-app.whenReady().then(createWindow);
 export {
   MAIN_DIST,
   RENDERER_DIST,

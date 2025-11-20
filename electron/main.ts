@@ -46,7 +46,7 @@ function createWindow() {
         },
         {
           label: 'Open file',
-          accelerator: 'CmdOrCtrl+O',
+          accelerator: 'CmdOrCtrl+0',
           click: async () => {
             const filePath = await getPath('file')
             console.log(filePath)
@@ -84,10 +84,10 @@ function createWindow() {
 }
 
 // Declare the type of path
-type pathType = 'file' | 'folder'
+type PathType = 'file' | 'folder'
 
 // Get path depending on path type
-async function getPath(type:pathType): Promise<string | undefined> {
+async function getPath(type: PathType): Promise<String | undefined> {
   let result
   try {
     if (type === 'file') {

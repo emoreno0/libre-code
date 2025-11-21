@@ -2,6 +2,7 @@ import { app, BrowserWindow, dialog, Menu, MenuItemConstructorOptions } from 'el
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import fs from 'node:fs/promises'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -49,7 +50,9 @@ function createWindow() {
           accelerator: 'CmdOrCtrl+0',
           click: async () => {
             const filePath = await getPath('file')
+            const fileContent = await readFile(filePath!)
             console.log(filePath)
+            console.log(fileContent)
           },
         },
         {
@@ -87,7 +90,7 @@ function createWindow() {
 type PathType = 'file' | 'folder'
 
 // Get path depending on path type
-async function getPath(type: PathType): Promise<String | undefined> {
+async function getPath(type: PathType): Promise<string | undefined> {
   let result
   try {
     if (type === 'file') {
@@ -102,6 +105,17 @@ async function getPath(type: PathType): Promise<String | undefined> {
     return result && result.filePaths.length > 0 ? result.filePaths[0] : undefined
   } catch (error) {
     console.error(`Error detected in ${type}`, error)
+    return undefined
+  }
+}
+
+// Reads file
+async function readFile(filePath: string): Promise<string | undefined> {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8')
+    return content
+  } catch (error) {
+    console.log(error)
     return undefined
   }
 }

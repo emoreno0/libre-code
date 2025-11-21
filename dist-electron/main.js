@@ -2,6 +2,7 @@ import { app, BrowserWindow, Menu, dialog } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import fs from "node:fs/promises";
 createRequire(import.meta.url);
 const __dirname$1 = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname$1, "..");
@@ -37,10 +38,12 @@ function createWindow() {
         },
         {
           label: "Open file",
-          accelerator: "CmdOrCtrl+O",
+          accelerator: "CmdOrCtrl+0",
           click: async () => {
             const filePath = await getPath("file");
+            const fileContent = await readFile(filePath);
             console.log(filePath);
+            console.log(fileContent);
           }
         },
         {
@@ -86,6 +89,15 @@ async function getPath(type) {
     return result && result.filePaths.length > 0 ? result.filePaths[0] : void 0;
   } catch (error) {
     console.error(`Error detected in ${type}`, error);
+    return void 0;
+  }
+}
+async function readFile(filePath) {
+  try {
+    const content = await fs.readFile(filePath, "utf-8");
+    return content;
+  } catch (error) {
+    console.log(error);
     return void 0;
   }
 }

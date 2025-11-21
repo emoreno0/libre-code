@@ -112,8 +112,7 @@ async function getPath(type: PathType): Promise<string | undefined> {
 // Reads file
 async function readFile(filePath: string): Promise<string | undefined> {
   try {
-    const content = await fs.readFile(filePath, 'utf-8')
-    return content
+    return await fs.readFile(filePath, 'utf-8')
   } catch (error) {
     console.log(error)
     return undefined

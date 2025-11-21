@@ -94,8 +94,7 @@ async function getPath(type) {
 }
 async function readFile(filePath) {
   try {
-    const content = await fs.readFile(filePath, "utf-8");
-    return content;
+    return await fs.readFile(filePath, "utf-8");
   } catch (error) {
     console.log(error);
     return void 0;

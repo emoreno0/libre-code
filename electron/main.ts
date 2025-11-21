@@ -3,6 +3,7 @@ import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
+import { readdirSync } from 'node:fs'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -49,18 +50,16 @@ function createWindow() {
           label: 'Open file',
           accelerator: 'CmdOrCtrl+0',
           click: async () => {
-            const filePath = await getPath('file')
-            const fileContent = await readFile(filePath!)
-            console.log(filePath)
-            console.log(fileContent)
+            const openFolder = await openPath('file')
+            console.log(openFolder?.content)
           },
         },
         {
           label: 'Open folder',
           accelerator: 'CmdOrCtrl+1',
           click: async () => {
-            const folderPath = await getPath('folder')
-            console.log(folderPath)
+            const openFolder = await openPath('folder')
+            console.log(openFolder?.folderList)
           }
         },
         {
@@ -86,36 +85,37 @@ function createWindow() {
   Menu.setApplicationMenu(menu)
 }
 
+// Declare an interface for results
+interface OpenResult {
+  content: string | undefined,
+  path: string | undefined,
+  folderList: string[] | undefined,
+}
+
 // Declare the type of path
 type PathType = 'file' | 'folder'
 
-// Get path depending on path type
-async function getPath(type: PathType): Promise<string | undefined> {
-  let result
+// Function for getting the path and reading
+async function openPath(type: PathType): Promise<OpenResult | undefined> {
   try {
+    let path, content, folderList
+    path = await dialog.showOpenDialog({
+      properties: type === 'file' ? ['openFile'] : ['openDirectory']
+    })
+
+    path = path.filePaths[0]
+
     if (type === 'file') {
-      result = await dialog.showOpenDialog({
-        properties: ['openFile']
-      })
+      content = await fs.readFile(path, 'utf-8')
+      return { content: content, path: path, folderList: undefined }
     } else if (type === 'folder') {
-      result = await dialog.showOpenDialog({
-        properties: ['openDirectory']
-      })
+      folderList = await readdirSync(path)
+      return { content: undefined, path: path, folderList: folderList }
     }
-    return result && result.filePaths.length > 0 ? result.filePaths[0] : undefined
+
   } catch (error) {
     console.error(`Error detected in ${type}`, error)
-    return undefined
-  }
-}
-
-// Reads file
-async function readFile(filePath: string): Promise<string | undefined> {
-  try {
-    return await fs.readFile(filePath, 'utf-8')
-  } catch (error) {
-    console.log(error)
-    return undefined
+    return { path: undefined, content: undefined, folderList: undefined }
   }
 }
 

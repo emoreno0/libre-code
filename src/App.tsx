@@ -1,10 +1,13 @@
 export default function App() {
   const openFile = async () => {
-    await window.electronAPI.openPath('file')
+    const openFile = await window.electronAPI.openPath('file')
+    const splitFileContent = openFile.content?.split("\n")
+    console.log(splitFileContent, openFile.path)
   }
 
   const openFolder = async () => {
-    await window.electronAPI.openPath('folder')
+    const openFolder = await window.electronAPI.openPath('folder')
+    console.log(openFolder)
   }
 
   return (

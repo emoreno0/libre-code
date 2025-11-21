@@ -1,12 +1,15 @@
-/// <reference types="vite-plugin-electron/electron-env" />
+import 'electron'
 
-declare namespace NodeJS {
-  interface ProcessEnv {
-    APP_ROOT: string
-    VITE_PUBLIC: string
+declare global {
+  interface Window {
+    electronAPI: {
+      openPath: (type: 'file' | 'folder') => Promise<{
+        path?: string
+        content?: string
+        folderList?: string[]
+      }>
+    }
   }
 }
 
-interface Window {
-  ipcRenderer: import('electron').IpcRenderer
-}
+export {}

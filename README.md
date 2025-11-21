@@ -3,7 +3,7 @@
 
 ## **Just install and code. No bullshit.**
 
-## ⚠️ Status: Work in Progress
+### ⚠️ Status: Work in Progress
 
 A 100% open-source, fully customizable IDE. 
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, Menu, MenuItemConstructorOptions } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions } from 'electron'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -22,6 +22,8 @@ function createWindow() {
   win = new BrowserWindow({
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   })
 
@@ -50,8 +52,9 @@ function createWindow() {
           label: 'Open file',
           accelerator: 'CmdOrCtrl+0',
           click: async () => {
-            const openFolder = await openPath('file')
-            console.log(openFolder?.content)
+            const openFile = await openPath('file')
+            console.log(openFile?.path)
+            console.log(openFile?.content)
           },
         },
         {
@@ -59,6 +62,7 @@ function createWindow() {
           accelerator: 'CmdOrCtrl+1',
           click: async () => {
             const openFolder = await openPath('folder')
+            console.log(openFolder?.path)
             console.log(openFolder?.folderList)
           }
         },
@@ -84,6 +88,11 @@ function createWindow() {
 
   Menu.setApplicationMenu(menu)
 }
+
+// Declare open-path
+ipcMain.handle('open-path', async (event, type: PathType): Promise<OpenResult | undefined> => {
+  return openPath(type)
+})
 
 // Declare an interface for results
 interface OpenResult {

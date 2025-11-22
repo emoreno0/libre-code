@@ -1,7 +1,7 @@
 import { useState } from "react"
 import FileExplorer from "./components/FileExplorer"
-import OpenButton from "./components/buttons/OpenButton"
 import CodeEditor from "./components/editor/CodeEditor"
+import NavBar from "./components/NavBar"
 
 export default function App() {
   const [isFile, setIsFile] = useState<boolean | undefined>(undefined)
@@ -30,19 +30,15 @@ export default function App() {
   }
 
   return (
-    <div className="flex w-full bg-gray-500">
+    <div className="flex w-full h-full">
+      <NavBar
+        content={content}
+        openFile={openFile}
+        openFolder={openFolder}
+        removeValues={removeValues}
+      />
       <FileExplorer content={content} isFile={isFile} selected={selected} />
-      <div className="w-full block m-1 space-y-4 space-x-1">
-        <OpenButton onClick={openFile} ButtonOptions='file' />
-        <OpenButton onClick={openFolder} ButtonOptions='folder' />
-        {
-          content ?
-            <OpenButton onClick={removeValues} ButtonOptions='remove' /> : <></>
-        }
-        <div className="text-black space-y-4 ml-6 text-sm whitespace-pre-wrap">
-            <CodeEditor content={content} isFile={isFile}/>
-        </div>
-      </div>
+      <CodeEditor content={content} isFile={isFile} />
     </div>
   )
 }

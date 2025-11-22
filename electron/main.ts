@@ -36,7 +36,7 @@ const menuTemplate: MenuItemConstructorOptions[] = [
         label: 'Open file',
         accelerator: 'CmdOrCtrl+0',
         click: async () => {
-          const openFile = await window.electronAPI.openPath('file')
+          const openFile = await openPath('file')
           console.log(openFile?.path)
           console.log(openFile?.content)
         },
@@ -45,7 +45,7 @@ const menuTemplate: MenuItemConstructorOptions[] = [
         label: 'Open folder',
         accelerator: 'CmdOrCtrl+1',
         click: async () => {
-          const openFolder = await window.electronAPI.openPath('folder')
+          const openFolder = await openPath('folder')
           console.log(openFolder?.path)
           console.log(openFolder?.folderList)
         }
@@ -80,7 +80,7 @@ ipcMain.handle('open-path', async (event, type: PathType): Promise<OpenResult | 
 interface OpenResult {
   content: string | undefined,
   path: string | undefined,
-  folderList: string[] | undefined,
+  folderList: string[][] | undefined,
 }
 
 // Declare the type of path

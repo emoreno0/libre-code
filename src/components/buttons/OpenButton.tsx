@@ -1,10 +1,10 @@
-type Props = { onClick?: () => void; ButtonOptions: string };
-export default function OpenButton({ onClick, ButtonOptions }: Props) {
+type Props = { onClick?: () => void; buttonOptions: string };
+export default function OpenButton({ onClick, buttonOptions }: Props) {
     return (
         <button onClick={onClick} className="p-0.5 text-md bg-black text-white rounded-md select-none">
-            {ButtonOptions === 'file' ?
+            {buttonOptions === 'file' ?
                 <span>Open file</span>
-                : ButtonOptions === 'folder' ?
+                : buttonOptions === 'folder' ?
                     <span>Open folder</span>
                     :
                     <span>Remove</span>

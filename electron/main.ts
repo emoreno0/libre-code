@@ -28,43 +28,42 @@ function createWindow() {
   }
 }
 
-  const menuTemplate: MenuItemConstructorOptions[] = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'Open file',
-          accelerator: 'CmdOrCtrl+0',
-          click: async () => {
-            const openFile = await openPath('file')
-            console.log(openFile?.path)
-            console.log(openFile?.content)
-          },
+const menuTemplate: MenuItemConstructorOptions[] = [
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open file',
+        accelerator: 'CmdOrCtrl+0',
+        click: async () => {
+          const openFile = await window.electronAPI.openPath('file')
+          console.log(openFile?.path)
+          console.log(openFile?.content)
         },
-        {
-          label: 'Open folder',
-          accelerator: 'CmdOrCtrl+1',
-          click: async () => {
-            const openFolder = await openPath('folder')
-            console.log(openFolder?.path)
-            console.log(openFolder?.folderList)
-          }
+      },
+      {
+        label: 'Open folder',
+        accelerator: 'CmdOrCtrl+1',
+        click: async () => {
+          const openFolder = await window.electronAPI.openPath('folder')
+          console.log(openFolder?.path)
+          console.log(openFolder?.folderList)
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Exit',
+        click: () => {
+          app.quit()
         },
-        { type: 'separator' },
-        {
-          label: 'Exit',
-          click: () => {
-            app.quit()
-          },
-        },
-      ],
-    }
-  ]
+      },
+    ],
+  }
+]
 
-  const menu = Menu.buildFromTemplate(menuTemplate)
+const menu = Menu.buildFromTemplate(menuTemplate)
 
-  Menu.setApplicationMenu(menu)
-}
+Menu.setApplicationMenu(menu)
 
 // Declare open-path
 ipcMain.handle('open-path', async (event, type: PathType): Promise<OpenResult | undefined> => {

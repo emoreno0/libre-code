@@ -9,8 +9,8 @@ let win: BrowserWindow | null
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 600,
+    height: 500,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -49,6 +49,12 @@ const menuTemplate: MenuItemConstructorOptions[] = [
           console.log(openFolder?.path)
           console.log(openFolder?.folderList)
         }
+      },
+            {
+        label: 'Save',
+        click: () => {
+          console.log("Save!")
+        },
       },
       { type: 'separator' },
       {

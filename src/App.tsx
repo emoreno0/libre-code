@@ -1,6 +1,7 @@
 import { useState } from "react"
 import FileExplorer from "./components/FileExplorer"
 import OpenButton from "./components/buttons/OpenButton"
+import CodeEditor from "./components/editor/CodeEditor"
 
 export default function App() {
   const [isFile, setIsFile] = useState<boolean | undefined>(undefined)
@@ -29,27 +30,17 @@ export default function App() {
   }
 
   return (
-    <div className="flex">
+    <div className="flex w-full bg-gray-500">
       <FileExplorer content={content} isFile={isFile} selected={selected} />
-      <div className="block m-4 space-y-4 space-x-4">
+      <div className="w-full block m-1 space-y-4 space-x-1">
         <OpenButton onClick={openFile} ButtonOptions='file' />
         <OpenButton onClick={openFolder} ButtonOptions='folder' />
         {
           content ?
             <OpenButton onClick={removeValues} ButtonOptions='remove' /> : <></>
         }
-        <div className="text-black space-y-4 font-mono text-sm whitespace-pre-wrap">
-          <div>
-            {content && isFile ? (
-              content.map((phrase, key) => <>{
-                isFile ?
-                  <span className="select-text"><span className="select-none">{key + 1} </span>{phrase}<br /></span>
-                  :
-                  <p className="select-none">{phrase}</p>}</>)
-            ) : (
-              <span></span>
-            )}
-          </div>
+        <div className="text-black space-y-4 ml-6 text-sm whitespace-pre-wrap">
+            <CodeEditor content={content} isFile={isFile}/>
         </div>
       </div>
     </div>

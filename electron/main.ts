@@ -1,20 +1,9 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions } from 'electron'
-import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { readdirSync } from 'node:fs'
 
-const require = createRequire(import.meta.url)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
-process.env.APP_ROOT = path.join(__dirname, '..')
-
-export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
-export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
-
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
 let win: BrowserWindow | null
 
@@ -29,25 +18,20 @@ function createWindow() {
     },
   })
 
-  win.webContents.openDevTools()
-
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
-  } else {
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+  if (import.meta.env.DEV) {
+    win.webContents.openDevTools({ mode: 'detach' })
   }
+  if (import.meta.env.DEV) {
+    win.loadURL('http://localhost:5173')
+  } else {
+    win.loadFile(path.join(__dirname, '../dist/index.html'))
+  }
+}
 
   const menuTemplate: MenuItemConstructorOptions[] = [
     {
       label: 'File',
       submenu: [
-        {
-          label: 'New',
-          accelerator: 'CmdOrCtrl+N',
-          click: () => {
-            console.log('New file clicked')
-          },
-        },
         {
           label: 'Open file',
           accelerator: 'CmdOrCtrl+0',
@@ -65,13 +49,6 @@ function createWindow() {
             console.log(openFolder?.path)
             console.log(openFolder?.folderList)
           }
-        },
-        {
-          label: 'Save',
-          accelerator: 'CmdOrCtrl+S',
-          click: () => {
-            console.log('Save clicked')
-          },
         },
         { type: 'separator' },
         {

@@ -1,16 +1,17 @@
-import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import path from 'node:path'
-import fs from 'node:fs/promises'
 import { readdirSync } from 'node:fs'
+import fs from 'node:fs/promises'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 
-let win: BrowserWindow | null
+let win: BrowserWindow | null = null
 
 function createWindow() {
   win = new BrowserWindow({
     width: 600,
     height: 500,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -18,108 +19,57 @@ function createWindow() {
     },
   })
 
-  if (import.meta.env.DEV) {
-    win.webContents.openDevTools({ mode: 'detach' })
-  }
+  win.setMenu(null)
+
   if (import.meta.env.DEV) {
     win.loadURL('http://localhost:5173')
+    win.webContents.openDevTools({ mode: 'detach' })
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 }
 
-const menuTemplate: MenuItemConstructorOptions[] = [
-  {
-    label: 'File',
-    submenu: [
-      {
-        label: 'Open file',
-        accelerator: 'CmdOrCtrl+0',
-        click: async () => {
-          const openFile = await openPath('file')
-          console.log(openFile?.path)
-          console.log(openFile?.content)
-        },
-      },
-      {
-        label: 'Open folder',
-        accelerator: 'CmdOrCtrl+1',
-        click: async () => {
-          const openFolder = await openPath('folder')
-          console.log(openFolder?.path)
-          console.log(openFolder?.folderList)
-        }
-      },
-            {
-        label: 'Save',
-        click: () => {
-          console.log("Save!")
-        },
-      },
-      { type: 'separator' },
-      {
-        label: 'Exit',
-        click: () => {
-          app.quit()
-        },
-      },
-    ],
-  }
-]
+interface OpenResult {
+  content?: string
+  path?: string
+  folderList?: string[]
+}
 
-const menu = Menu.buildFromTemplate(menuTemplate)
+type PathType = 'file' | 'folder'
 
-Menu.setApplicationMenu(menu)
-
-// Declare open-path
 ipcMain.handle('open-path', async (event, type: PathType): Promise<OpenResult | undefined> => {
   return openPath(type)
 })
 
-// Declare an interface for results
-interface OpenResult {
-  content: string | undefined,
-  path: string | undefined,
-  folderList: string[][] | undefined,
-}
-
-// Declare the type of path
-type PathType = 'file' | 'folder'
-
-// Function for getting the path and reading
 async function openPath(type: PathType): Promise<OpenResult | undefined> {
   try {
-    let path, content, folderList
-    path = await dialog.showOpenDialog({
-      properties: type === 'file' ? ['openFile'] : ['openDirectory']
+    const result = await dialog.showOpenDialog(win!, {
+      properties: type === 'file' ? ['openFile'] : ['openDirectory'],
     })
 
-    path = path.filePaths[0]
+    if (result.canceled || !result.filePaths[0]) return undefined
+
+    const selectedPath = result.filePaths[0]
 
     if (type === 'file') {
-      content = await fs.readFile(path, 'utf-8')
-      return { content: content, path: path, folderList: undefined }
-    } else if (type === 'folder') {
-      folderList = await readdirSync(path)
-      return { content: undefined, path: path, folderList: folderList }
+      const content = await fs.readFile(selectedPath, 'utf-8')
+      return { content, path: selectedPath }
+    } else {
+      const folderList = readdirSync(selectedPath)
+      return { path: selectedPath, folderList }
     }
-
   } catch (error) {
-    console.error(`Error detected in ${type}`, error)
-    return { path: undefined, content: undefined, folderList: undefined }
+    console.error(`Error al abrir ${type}:`, error)
+    return undefined
   }
 }
 
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
+  if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })

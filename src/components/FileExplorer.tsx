@@ -1,16 +1,20 @@
 type Props = { content: string[] | undefined; isFile: boolean | undefined; selected: string | undefined }
+
 export default function FileExplorer({ content, isFile, selected }: Props) {
     return (
-        <div className="fixed bg-gray-400 w-[20%] mt-[7.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
+        <div className="fixed text-sm bg-[#14213d] w-[20%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
+            {!isFile ? <div className="pl-2 text-gray-100 w-full p-0.5 hover:bg-[#203561] overflow-x-hidden">
+                {selected}
+            </div> : <></>}
             {
                 content && !isFile ? (
                     content.map((cont) =>
-                        <div className="w-full text-md p-0.5 hover:bg-gray-500 overflow-x-hidden">
+                        <div className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
                             {cont}
                         </div>
                     )
-                ) :  selected ? (
-                    <div className="w-full text-md p-0.5 border border-transparent hover:border-black overflow-x-hidden">
+                ) : selected ? (
+                    <div className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
                         {selected}
                     </div>
                 ) : <></>

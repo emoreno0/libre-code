@@ -10,6 +10,7 @@ export default function CodeEditor({ content, isFile }: Props) {
     const [lineNum, setLineNum] = useState<number>(1)
 
     useEffect(() => {
+        if(content) {countLines()}
         const editor = editorRef.current
         if (!editor) return
         editor.addEventListener('input', () => countLines())

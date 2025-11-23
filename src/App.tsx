@@ -37,8 +37,15 @@ export default function App() {
         openFolder={openFolder}
         removeValues={removeValues}
       />
-      <FileExplorer content={content} isFile={isFile} selected={selected} />
-      <CodeEditor content={content} isFile={isFile} />
+      <FileExplorer
+        content={content}
+        isFile={isFile}
+        selected={selected}
+      />
+      <CodeEditor
+        content={content}
+        isFile={isFile}
+      />
     </div>
   )
 }

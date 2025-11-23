@@ -15,7 +15,9 @@ export default function NavBar({ openFile, openFolder, removeValues, content }: 
                 <OpenButton onClick={openFolder} buttonOptions='folder' />
                 {
                     content ?
-                        <OpenButton onClick={removeValues} buttonOptions='remove' /> : <></>
+                        <OpenButton onClick={removeValues} buttonOptions='remove' />
+                        :
+                        <></>
                 }
             </div>
         </div>

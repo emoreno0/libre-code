@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
     content: string[] | undefined;
@@ -6,21 +6,49 @@ type Props = {
 }
 
 export default function CodeEditor({ content, isFile }: Props) {
+    const editorRef = useRef<HTMLDivElement>(null);
+    const [lineNum, setLineNum] = useState<number>(1)
+
+    useEffect(() => {
+        const editor = editorRef.current
+        if (!editor) return
+        editor.addEventListener('input', () => countLines())
+    })
+
+    const countLines = () => {
+        const count = editorRef.current?.children.length
+        if (count == undefined) return
+        setLineNum(Math.max(count | 0, 1))
+    }
+
     return (
-        <div className="min-h-[200vh] min-w-fit text-sm w-screen ml-[20%] bg-[#14213d] pt-[10vh] pl-6">
+        <div className="min-h-[200vh] min-w-fit text-sm w-screen ml-[20%] bg-[#14213d] pt-[8vh] pl-4">
             {content && isFile ?
                 <div className="flex space-x-2">
-                    {content ? <div className="block text-gray-100">
-                        {content.map((line, key) => <p>{key + 1}</p>)}
-                    </div> : <></>}
+                    {content ? <div className="block text-gray-400 select-none">
+                        {Array.from({ length: lineNum }, (_, i) => (
+                            <p key={i}>{i + 1}</p>
+                        ))}
+                    </div>
+                        :
+                        <></>
+                    }
                     <div
+                        ref={editorRef}
                         autoCorrect='false'
                         spellCheck='false'
                         aria-selected='false'
                         contentEditable
+                        suppressContentEditableWarning
                         className="min-w-full w-screen select-text text-gray-100 focus:outline-none"
                     >
-                        {content.map((line, key) => <p>{line}</p>)}
+
+                        {content.map((line, key) =>
+                            <p key={key}>
+                                {line}
+                                <br />
+                            </p>
+                        )}
                     </div>
                 </div>
                 :

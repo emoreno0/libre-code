@@ -8,8 +8,8 @@ export default function FileExplorer({ content, isFile, selected }: Props) {
             </div> : <></>}
             {
                 content && !isFile ? (
-                    content.map((cont) =>
-                        <div className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
+                    content.map((cont, key) =>
+                        <div key={key} className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
                             {cont}
                         </div>
                     )

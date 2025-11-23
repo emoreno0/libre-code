@@ -11,16 +11,20 @@ export default function App() {
 
   const openFile = async () => {
     const openFile = await window.electronAPI.openPath('file')
-    setContent(openFile.content?.split("\n"))
-    setPath(openFile.path)
-    setIsFile(true)
+    if (openFile) {
+      setContent(openFile.content?.split("\n"))
+      setPath(openFile.path)
+      setIsFile(true)
+    }
   }
 
   const openFolder = async () => {
     const openFolder = await window.electronAPI.openPath('folder')
-    setPath(openFolder.path)
-    setContent(openFolder.folderList)
-    setIsFile(false)
+    if (openFolder) {
+      setPath(openFolder.path)
+      setContent(openFolder.folderList)
+      setIsFile(false)
+    }
   }
 
   const removeValues = () => {

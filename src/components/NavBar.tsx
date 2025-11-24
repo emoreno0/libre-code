@@ -10,7 +10,7 @@ export default function NavBar() {
     const clearState = () => window.electronAPI.clearState()
     const saveFile = () => window.electronAPI.saveFile()
 
-    const isFile = currentState?.type === 'file'
+    const opened = currentState?.path != null
 
     useEffect(() => {
         window.electronAPI.onStateChanged((state) => {
@@ -30,7 +30,7 @@ export default function NavBar() {
                         <></>
                 }
                 {
-                    isFile ?
+                    opened ?
                         <OpenButton onClick={clearState} text='Remove' />
                         :
                         <></>

@@ -34,7 +34,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex w-full h-full">
+    <div className="">
       <NavBar
         content={content}
         openFile={openFile}

@@ -10,8 +10,8 @@ export default function CodeEditor({ content, isFile }: Props) {
     const [lineNum, setLineNum] = useState<number>(1)
 
     useEffect(() => {
-        if(content) {countLines()}
         const editor = editorRef.current
+        if (content) { countLines() }
         if (!editor) return
         editor.addEventListener('input', () => countLines())
     })
@@ -23,7 +23,7 @@ export default function CodeEditor({ content, isFile }: Props) {
     }
 
     return (
-        <div className="min-h-[200vh] min-w-fit text-sm w-screen ml-[20%] bg-[#14213d] pt-[8vh] pl-4">
+        <div className="min-h-[200vh] text-sm ml-[20%] bg-[#14213d] pt-[8vh] pl-4">
             {content && isFile ?
                 <div className="flex space-x-2">
                     {content ? <div className="block text-gray-400 select-none">
@@ -41,7 +41,7 @@ export default function CodeEditor({ content, isFile }: Props) {
                         aria-selected='false'
                         contentEditable
                         suppressContentEditableWarning
-                        className="min-w-full w-screen select-text text-gray-100 focus:outline-none"
+                        className="min-w-fit w-screen select-text text-gray-100 focus:outline-none"
                     >
 
                         {content.map((line, key) =>

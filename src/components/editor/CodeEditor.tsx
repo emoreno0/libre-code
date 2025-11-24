@@ -44,12 +44,18 @@ export default function CodeEditor({ content, isFile }: Props) {
                         className="min-w-fit w-screen select-text text-gray-100 focus:outline-none"
                     >
 
-                        {content.map((line, key) =>
-                            <p key={key}>
-                                {line}
-                                <br />
-                            </p>
-                        )}
+                        {content ?
+                            <>
+                                {content.map((line, key) =>
+                                    <p key={key}>
+                                        {line}
+                                        <br />
+                                    </p>
+                                )}
+                            </>
+                            :
+                            <p></p>
+                    }
                     </div>
                 </div>
                 :

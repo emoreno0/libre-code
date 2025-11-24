@@ -34,7 +34,7 @@ export default function App() {
   }
 
   return (
-    <div className="">
+    <div>
       <NavBar
         content={content}
         openFile={openFile}

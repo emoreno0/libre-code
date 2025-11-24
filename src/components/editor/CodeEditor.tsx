@@ -15,6 +15,8 @@ export default function CodeEditor() {
 
         editor?.addEventListener('input', () => {countLines()})
 
+        countLines()
+
         window.electronAPI.onStateChanged((state) => {
             setCurrentState(state)
         })
@@ -27,7 +29,7 @@ export default function CodeEditor() {
     }
 
     return (
-        <div className="min-h-[200vh] text-sm ml-[20%] bg-[#14213d] pt-[8vh] pl-4">
+        <div className="min-h-[200vh] text-sm ml-[20%] bg-[#14213d] pt-[8vh] pl-2">
             {content && isFile ?
                 <div className="flex space-x-2">
                     {content ? <div className="block text-gray-400 select-none">
@@ -58,7 +60,9 @@ export default function CodeEditor() {
                                 )}
                             </>
                             :
-                            <p></p>
+                            <p>
+                                
+                            </p>
                         }
                     </div>
                 </div>

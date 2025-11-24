@@ -4,7 +4,7 @@ import { OpenResult } from "../state/state";
 export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
 
-    const content = currentState?.content?.split('\n')
+    const content = currentState?.contentList
     const isFile = currentState?.type === 'file'
     const name = currentState?.name
 

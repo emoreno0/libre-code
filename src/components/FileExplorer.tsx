@@ -1,11 +1,28 @@
-type Props = { content: string[] | undefined; isFile: boolean | undefined; selected: string | undefined }
+import { useEffect, useState } from "react";
+import { OpenResult } from "../state/state";
 
-export default function FileExplorer({ content, isFile, selected }: Props) {
+export default function FileExplorer() {
+    const [currentState, setCurrentState] = useState<OpenResult | null>(null)
+
+    const content = currentState?.content?.split('\n')
+    const isFile = currentState?.type === 'file'
+    const name = currentState?.name
+
+    useEffect(() => {
+        window.electronAPI.onStateChanged((state) => {
+            setCurrentState(state)
+        })
+    })
+
+
     return (
         <div className="fixed text-sm bg-[#14213d] w-[20%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
             {!isFile && content ? <div className="pl-2 text-gray-100 w-full p-0.5 hover:bg-[#203561] overflow-x-hidden">
-                {selected}
-            </div> : <></>}
+                {name}
+            </div>
+                :
+                <></>
+            }
             {
                 content && !isFile ? (
                     content.map((cont, key) =>
@@ -13,11 +30,13 @@ export default function FileExplorer({ content, isFile, selected }: Props) {
                             {cont}
                         </div>
                     )
-                ) : selected ? (
+                ) : name ? (
                     <div className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
-                        {selected}
+                        {name}
                     </div>
-                ) : <></>
+                )
+                    :
+                    <></>
             }
         </div>
     )

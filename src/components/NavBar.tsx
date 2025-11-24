@@ -1,21 +1,37 @@
+import { useEffect, useState } from "react"
 import OpenButton from "./buttons/OpenButton"
+import { OpenResult } from "../state/state"
 
-type Props = {
-    openFile?: () => {},
-    openFolder?: () => {};
-    removeValues?: () => void;
-    content: string[] | undefined
-}
+export default function NavBar() {
+    const [currentState, setCurrentState] = useState<OpenResult | null>(null)
 
-export default function NavBar({ openFile, openFolder, removeValues, content }: Props) {
+    const openFile = () => window.electronAPI.openFile()
+    const openFolder = () => window.electronAPI.openFolder()
+    const clearState = () => window.electronAPI.clearState()
+    const saveFile = () => window.electronAPI.saveFile()
+
+    const isFile = currentState?.type === 'file'
+
+    useEffect(() => {
+        window.electronAPI.onStateChanged((state) => {
+            setCurrentState(state)
+        })
+    })
+
     return (
         <div className="fixed w-screen h-[6.5vh] bg-[#14213d] border border-black z-10 select-none">
             <div className="flex h-full items-center">
-                <OpenButton onClick={openFile} buttonOptions='file' />
-                <OpenButton onClick={openFolder} buttonOptions='folder' />
+                <OpenButton onClick={openFile} text='Open File' />
+                <OpenButton onClick={openFolder} text='Open Folder' />
                 {
-                    content ?
-                        <OpenButton onClick={removeValues} buttonOptions='remove' />
+                    currentState ?
+                        <OpenButton onClick={saveFile} text='Save' />
+                        :
+                        <></>
+                }
+                {
+                    isFile ?
+                        <OpenButton onClick={clearState} text='Remove' />
                         :
                         <></>
                 }

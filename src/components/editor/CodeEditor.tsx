@@ -1,24 +1,28 @@
 import { useEffect, useRef, useState } from "react";
+import { OpenResult } from "../../state/state";
 
-type Props = {
-    content: string[] | undefined;
-    isFile: boolean | undefined
-}
-
-export default function CodeEditor({ content, isFile }: Props) {
-    const editorRef = useRef<HTMLDivElement>(null);
+export default function CodeEditor() {
+    const [currentState, setCurrentState] = useState<OpenResult | null>(null)
     const [lineNum, setLineNum] = useState<number>(1)
+    const editorRef = useRef<HTMLDivElement>(null);
+
+    const content = currentState?.content?.split('\n')
+    const isFile = currentState?.type === 'file'
+
 
     useEffect(() => {
         const editor = editorRef.current
-        if (content) { countLines() }
-        if (!editor) return
-        editor.addEventListener('input', () => countLines())
+
+        editor?.addEventListener('input', () => {countLines()})
+
+        window.electronAPI.onStateChanged((state) => {
+            setCurrentState(state)
+        })
     })
 
     const countLines = () => {
         const count = editorRef.current?.children.length
-        if (count == undefined) return
+        if (!count) return
         setLineNum(Math.max(count | 0, 1))
     }
 
@@ -55,7 +59,7 @@ export default function CodeEditor({ content, isFile }: Props) {
                             </>
                             :
                             <p></p>
-                    }
+                        }
                     </div>
                 </div>
                 :

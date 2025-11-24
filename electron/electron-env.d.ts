@@ -1,15 +1,14 @@
-import 'electron'
+import type { OpenResult } from '../src/state/state'
 
 declare global {
   interface Window {
     electronAPI: {
-      openPath: (type: 'file' | 'folder') => Promise<{
-        path?: string
-        content?: string
-        folderList?: string[]
-      }>
+      openFile: () => Promise<void>
+      openFolder: () => Promise<void>
+      saveFile: () => Promise<void>
+      getAppState: () => Promise<OpenResult | null>
+      clearState: () => Promise<void>
+      onStateChanged: (callback: (state: OpenResult | null) => void) => void
     }
   }
 }
-
-export {}

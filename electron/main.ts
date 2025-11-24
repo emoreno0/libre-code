@@ -1,6 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import path from 'node:path'
 import { readdirSync } from 'node:fs'
+import { appState } from '../src/state/state'
+import path from 'node:path'
 import fs from 'node:fs/promises'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
@@ -29,47 +30,59 @@ function createWindow() {
   }
 }
 
-interface OpenResult {
-  content?: string
-  path?: string
-  folderList?: string[]
-}
+// Handlers!
+ipcMain.handle('open-file', () => openDialog('file'))
+ipcMain.handle('open-folder', () => openDialog('folder'))
+ipcMain.handle('save-file', () => saveFile())
+ipcMain.handle('get-app-state', () => appState.get())
+ipcMain.handle('clear-state', () => appState.clear())
 
-type PathType = 'file' | 'folder'
-
-ipcMain.handle('open-path', async (event, type: PathType): Promise<OpenResult | undefined> => {
-  return openPath(type)
-})
-
-async function openPath(type: PathType): Promise<OpenResult | undefined> {
+// Opens Dialog & updates state!
+async function openDialog(type: 'file' | 'folder') {
   try {
     const result = await dialog.showOpenDialog(win!, {
       properties: type === 'file' ? ['openFile'] : ['openDirectory'],
     })
 
-    if (result.canceled || !result.filePaths[0]) return undefined
+    if (result.canceled || !result.filePaths[0]) return null
 
-    const selectedPath = result.filePaths[0]
+    const path = result.filePaths[0]
+    const name = path.split('/').pop()
 
     if (type === 'file') {
-      const content = await fs.readFile(selectedPath, 'utf-8')
-      return { content, path: selectedPath }
+      const content = await fs.readFile(path, 'utf-8')
+      const extension = name?.split('.').pop()
+      appState.set({
+        type: type,
+        name: name!,
+        path: path,
+        content: content,
+        extension: extension
+      })
     } else {
-      const folderList = readdirSync(selectedPath)
-      return { path: selectedPath, folderList }
+      const contentList = readdirSync(path)
+      appState.set({
+        type: type,
+        name: name!,
+        path: path,
+        contentList: contentList
+      })
     }
   } catch (error) {
     console.error(`Error al abrir ${type}:`, error)
-    return undefined
   }
 }
 
-app.whenReady().then(createWindow)
+// Saves File!
+async function saveFile() {
+  console.log('File saved!')
+}
 
+// Do not touch!
+app.whenReady().then(createWindow)
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
-
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })

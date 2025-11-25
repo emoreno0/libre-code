@@ -5,6 +5,7 @@ declare global {
     electronAPI: {
       openFile: () => Promise<void>
       openFolder: () => Promise<void>
+      editContent: (content: string) => Promise<void>
       saveFile: () => Promise<void>
       getAppState: () => Promise<OpenResult | null>
       clearState: () => Promise<void>

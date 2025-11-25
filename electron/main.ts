@@ -33,6 +33,7 @@ function createWindow() {
 // Handlers!
 ipcMain.handle('open-file', () => openDialog('file'))
 ipcMain.handle('open-folder', () => openDialog('folder'))
+ipcMain.handle('edit-content', (_event, content:string) => editContent(content))
 ipcMain.handle('save-file', () => saveFile())
 ipcMain.handle('get-app-state', () => appState.get())
 ipcMain.handle('clear-state', () => appState.clear())
@@ -70,6 +71,17 @@ async function openDialog(type: 'file' | 'folder') {
     }
   } catch (error) {
     console.error(`Error al abrir ${type}:`, error)
+  }
+}
+
+async function editContent(content: string) {
+  try {
+    appState.set({
+      ...appState.get()!,
+      content: content
+    })
+  } catch (error) {
+    console.error(error)
   }
 }
 

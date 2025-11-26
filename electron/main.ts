@@ -24,7 +24,6 @@ function createWindow() {
 
   if (import.meta.env.DEV) {
     win.loadURL('http://localhost:5173')
-    win.webContents.openDevTools({ mode: 'detach' })
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
@@ -33,7 +32,7 @@ function createWindow() {
 // Handlers!
 ipcMain.handle('open-file', () => openDialog('file'))
 ipcMain.handle('open-folder', () => openDialog('folder'))
-ipcMain.handle('edit-content', (_event, content:string) => editContent(content))
+ipcMain.handle('edit-content', (_event, content: string) => editContent(content))
 ipcMain.handle('save-file', () => saveFile())
 ipcMain.handle('get-app-state', () => appState.get())
 ipcMain.handle('clear-state', () => appState.clear())
@@ -90,8 +89,30 @@ async function saveFile() {
   console.log('File saved!')
 }
 
-// Do not touch!
 app.whenReady().then(createWindow)
+
+// Opens Config
+ipcMain.on("open-config", () => {
+  const configWin = new BrowserWindow({
+    width: 600,
+    height: 400,
+    autoHideMenuBar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.mjs'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    }
+  })
+  configWin.setMenu(null)
+
+  if (import.meta.env.DEV) {
+    configWin.loadURL('http://localhost:5173/config.html')
+  } else {
+    configWin.loadFile(path.join(__dirname, '../dist/config.html'))
+  }
+
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })

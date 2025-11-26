@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveFile: () => ipcRenderer.invoke('save-file'),
   getAppState: (): Promise<OpenResult | null> => ipcRenderer.invoke('get-app-state'),
   clearState: () => ipcRenderer.invoke('clear-state'),
+  openConfig: () => ipcRenderer.send("open-config"),
   onStateChanged: (callback: (state: OpenResult | null) => void) =>
     ipcRenderer.on('app-state-changed', (_e, state) => callback(state)),
 })

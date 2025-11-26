@@ -9,6 +9,7 @@ declare global {
       saveFile: () => Promise<void>
       getAppState: () => Promise<OpenResult | null>
       clearState: () => Promise<void>
+      openConfig: () => Promise<void>
       onStateChanged: (callback: (state: OpenResult | null) => void) => void
     }
   }

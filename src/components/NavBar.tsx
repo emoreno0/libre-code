@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import OpenButton from "./buttons/OpenButton"
 import { OpenResult } from "../state/state"
+import OpenButton from "./buttons/OpenButton"
 
 export default function NavBar() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
@@ -9,8 +9,7 @@ export default function NavBar() {
     const openFolder = () => window.electronAPI.openFolder()
     const clearState = () => window.electronAPI.clearState()
     const saveFile = () => window.electronAPI.saveFile()
-
-    const opened = currentState?.path != null
+    const openConfig = () => window.electronAPI.openConfig()
 
     useEffect(() => {
         window.electronAPI.onStateChanged((state) => {
@@ -19,22 +18,42 @@ export default function NavBar() {
     })
 
     return (
-        <div className="fixed w-screen h-[6.5vh] bg-[#14213d] border border-black z-10 select-none">
-            <div className="flex h-full items-center">
-                <OpenButton onClick={openFile} text='Open File' />
-                <OpenButton onClick={openFolder} text='Open Folder' />
-                {
-                    currentState ?
-                        <OpenButton onClick={saveFile} text='Save' />
-                        :
-                        <></>
-                }
-                {
-                    opened ?
-                        <OpenButton onClick={clearState} text='Remove' />
-                        :
-                        <></>
-                }
+        <div className="fixed w-screen h-[6.5vh] border border-black z-10 select-none">
+            <div className="flex justify-between h-full items-center">
+                <div>
+                    <OpenButton
+                        onClick={openFile}
+                        text='Open File'
+                    />
+                    <OpenButton
+                        onClick={openFolder}
+                        text='Open Folder'
+                    />
+                    {
+                        currentState?.type == 'file' ?
+                            <OpenButton
+                                onClick={saveFile}
+                                text='Save'
+                            />
+                            :
+                            <></>
+                    }
+                    {
+                        currentState ?
+                            <OpenButton
+                                onClick={clearState}
+                                text='Remove'
+                            />
+                            :
+                            <></>
+                    }
+                </div>
+                <div className="pr-2">
+                    <OpenButton
+                        onClick={openConfig}
+                        text="Config"
+                    />
+                </div>
             </div>
         </div>
     )

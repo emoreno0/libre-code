@@ -18,7 +18,7 @@ export default function CodeEditor() {
     return (
         <div className="min-h-[200vh] text-sm text-gray-100 ml-[20%] pt-[8vh] pl-2">
             {
-                currentState?.path ?
+                currentState?.type == 'file' ?
                     <div className="flex">
                         <div className="block select-none">
                             {Array.from({ length: lineCount }).map((_, i) => (

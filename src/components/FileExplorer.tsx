@@ -14,10 +14,10 @@ export default function FileExplorer() {
         })
     })
 
-
     return (
         <div className="fixed text-sm  w-[20%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
-            {!isFile && content ? <div className="pl-2 text-gray-100 w-full p-0.5 hover:bg-[#203561] overflow-x-hidden">
+            {!isFile && content ? 
+            <div className="pl-2 text-gray-100 w-full p-0.5 hover:bg-[#203561] overflow-x-hidden">
                 {name}
             </div>
                 :

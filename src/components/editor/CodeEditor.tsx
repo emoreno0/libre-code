@@ -10,7 +10,8 @@ export default function CodeEditor() {
             setCurrentState(state)
             setValue(state?.content ?? "")
         })
-    }, [])
+        window.electronAPI.editContent(value)
+    }, [value])
 
     const lineCount = value.split("\n").length
 

@@ -73,6 +73,7 @@ async function openDialog(type: 'file' | 'folder') {
   }
 }
 
+// Updates content state when content is edited
 async function editContent(content: string) {
   try {
     appState.set({
@@ -86,12 +87,14 @@ async function editContent(content: string) {
 
 // Saves File!
 async function saveFile() {
-  console.log('File saved!')
+  const app = appState.get()
+  if(!app || !app.path || !app.content) return
+  await fs.writeFile(app?.path, app?.content, 'utf-8')
 }
 
 app.whenReady().then(createWindow)
 
-// Opens Config
+// Opens Config Window
 ipcMain.on("open-config", () => {
   const configWin = new BrowserWindow({
     width: 600,

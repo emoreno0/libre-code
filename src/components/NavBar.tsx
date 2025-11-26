@@ -39,7 +39,7 @@ export default function NavBar() {
                             <></>
                     }
                     {
-                        currentState ?
+                        currentState?.path  ?
                             <OpenButton
                                 onClick={clearState}
                                 text='Remove'

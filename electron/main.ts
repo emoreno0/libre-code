@@ -46,25 +46,44 @@ async function openDialog(type: 'file' | 'folder') {
 
     if (result.canceled || !result.filePaths[0]) return null
 
-    const path = result.filePaths[0]
-    const name = path.split('/').pop()
+    const openPath = result.filePaths[0]
+    const name = openPath.split('/').pop()
 
     if (type === 'file') {
-      const content = await fs.readFile(path, 'utf-8')
+      const content = await fs.readFile(openPath, 'utf-8')
       const extension = name?.split('.').pop()
       appState.set({
         type: type,
         name: name!,
-        path: path,
+        path: openPath,
         content: content,
         extension: extension
       })
     } else {
-      const contentList = readdirSync(path)
+
+      // Returns an array of everything inside the directory path
+      async function getFolderList(dirPath: string): Promise<string[]> {
+        let res: string[] = []
+        const list = readdirSync(dirPath, { withFileTypes: true })
+
+        for (const item of list) {
+          const fullPath = path.join(dirPath, item.name)
+          if (item.isDirectory()) {
+            const subContent = await getFolderList(fullPath)
+            res = res.concat(subContent)
+          } else {
+            res.push(fullPath)
+          }
+        }
+        return res
+      }
+
+      const contentList = await getFolderList(openPath)
+
       appState.set({
         type: type,
         name: name!,
-        path: path,
+        path: openPath,
         contentList: contentList
       })
     }
@@ -88,7 +107,7 @@ async function editContent(content: string) {
 // Saves File!
 async function saveFile() {
   const app = appState.get()
-  if(!app || !app.path || !app.content) return
+  if (!app || !app.path || !app.content) return
   await fs.writeFile(app?.path, app?.content, 'utf-8')
 }
 

@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import { readdirSync } from 'node:fs'
-import { appState } from '../src/state/state'
+import { appState } from '../src/state/OpenedState'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
@@ -80,14 +80,9 @@ async function openDialog(type: 'file' | 'folder') {
 
       // Clears path from /user/documents/...
       async function clearPath(contentList: string[]): Promise<string[]> {
-        let res: string[] = []
-        for (const item of contentList) {
-          const clearPath = path.relative(openPath, item)
-          res.push(clearPath!)
-        }
-        return res
+        return contentList.map((item) => path.relative(openPath, item))
       }
-
+      
       const contentList = await getFolderList(openPath)
       const clearContentList = await clearPath(contentList)
 

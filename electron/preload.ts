@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { OpenResult } from '../src/state/state'
+import type { OpenResult } from '../src/state/OpenedState'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   openFile: () => ipcRenderer.invoke('open-file'),

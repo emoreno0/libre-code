@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { OpenResult } from "../state/state"
+import { OpenResult } from "../state/OpenedState"
 import OpenButton from "./buttons/OpenButton"
 
 export default function NavBar() {

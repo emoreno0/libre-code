@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { OpenResult } from "../../state/state"
+import { OpenResult } from "../../state/OpenedState"
 
 export default function CodeEditor() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)

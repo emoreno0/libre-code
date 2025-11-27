@@ -1,4 +1,4 @@
-import type { OpenResult } from '../src/state/state'
+import type { OpenResult } from '../src/state/OpenedState'
 
 declare global {
   interface Window {

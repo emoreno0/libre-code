@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import { readdirSync } from 'node:fs'
+import { readdir, readdirSync } from 'node:fs'
 import { appState } from '../src/state/OpenedState'
-import path from 'node:path'
+import path, { extname } from 'node:path'
 import fs from 'node:fs/promises'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
@@ -24,6 +24,7 @@ function createWindow() {
 
   if (import.meta.env.DEV) {
     win.loadURL('http://localhost:5173')
+    win.webContents.openDevTools()
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
@@ -62,36 +63,55 @@ async function openDialog(type: 'file' | 'folder') {
     } else {
 
       // Returns an array of everything inside the directory path
-      async function getFolderList(dirPath: string): Promise<string[]> {
-        let res: string[] = []
-        const list = readdirSync(dirPath, { withFileTypes: true })
+      async function getFoldersAndFilesList(dirPath: string): Promise<{
+        foldersRaw: string[],
+        filesRaw: string[],
+        folders: string[][],
+        files: string[][],
+        rawContentList: string[]
+      }> {
+        const foldersRaw: string[] = []
+        const filesRaw: string[] = []
+
+        const list = await fs.readdir(dirPath, { withFileTypes: true })
 
         for (const item of list) {
           const fullPath = path.join(dirPath, item.name)
+
           if (item.isDirectory()) {
-            const subContent = await getFolderList(fullPath)
-            res = res.concat(subContent)
-          } else {
-            res.push(fullPath)
+            foldersRaw.push(fullPath)
+
+            const sub = await getFoldersAndFilesList(fullPath)
+
+            foldersRaw.push(...sub.foldersRaw)
+            filesRaw.push(...sub.filesRaw)
+
+          } else if (item.isFile()) {
+            filesRaw.push(fullPath)
           }
         }
-        return res
+
+        const folders = foldersRaw.map((item) => item.split('/').slice(-2))
+        const files = filesRaw.map((item) => item.split('/').slice(-2))
+
+        return {
+          foldersRaw,
+          filesRaw,
+          folders,
+          files,
+          rawContentList: [...foldersRaw, ...filesRaw]
+        }
       }
 
-      // Clears path from /user/documents/...
-      async function clearPath(contentList: string[]): Promise<string[]> {
-        return contentList.map((item) => path.relative(openPath, item))
-      }
-      
-      const contentList = await getFolderList(openPath)
-      const clearContentList = await clearPath(contentList)
+      const { folders, files, rawContentList } = await getFoldersAndFilesList(openPath)
 
       appState.set({
         type: type,
         name: name!,
         path: openPath,
-        contentList: contentList,
-        clearContentList: clearContentList
+        foldersList: folders,
+        filesList: files,
+        rawContentList: rawContentList
       })
     }
   } catch (error) {
@@ -139,7 +159,6 @@ ipcMain.on("open-config", () => {
   } else {
     configWin.loadFile(path.join(__dirname, '../dist/config.html'))
   }
-
 })
 
 app.on('window-all-closed', () => {

@@ -16,7 +16,7 @@ export default function CodeEditor() {
     const lineCount = value.split("\n").length
 
     return (
-        <div className="min-h-[200vh] text-sm text-gray-100 ml-[20%] pt-[8vh] pl-2">
+        <div className="min-h-[200vh] text-sm text-gray-100 ml-[40%] pt-[8vh] pl-2">
             {
                 currentState?.type == 'file' ?
                     <div className="flex">

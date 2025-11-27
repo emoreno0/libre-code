@@ -5,8 +5,9 @@ export type OpenResult = {
   path: string
   name: string
   content?: string
-  contentList?: string[]
-  clearContentList?: string[]
+  foldersList?: string[][]
+  filesList?: string[][]
+  rawContentList?: string[]
   extension?: string
 }
 
@@ -26,8 +27,9 @@ class AppState {
   getPath = (): string | undefined => this.state?.path
   getName = (): string | undefined => this.state?.name
   getContent = (): string | undefined => this.state?.content
-  getContentList = (): string[] | undefined => this.state?.contentList
-  getClearContentList = (): string[] | undefined => this.state?.clearContentList
+  getFoldersList = (): string[][] | undefined => this.state?.foldersList
+  getFilesList = (): string[][] | undefined => this.state?.filesList
+  getRawContentList = (): string[] | undefined => this.state?.rawContentList
   getExtension = (): string | undefined => this.state?.extension
 
   isFile = (): boolean => this.state?.type === 'file'

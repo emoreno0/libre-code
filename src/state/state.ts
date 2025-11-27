@@ -6,6 +6,7 @@ export type OpenResult = {
   name: string
   content?: string
   contentList?: string[]
+  clearContentList?: string[]
   extension?: string
 }
 
@@ -26,6 +27,7 @@ class AppState {
   getName = (): string | undefined => this.state?.name
   getContent = (): string | undefined => this.state?.content
   getContentList = (): string[] | undefined => this.state?.contentList
+  getClearContentList = (): string[] | undefined => this.state?.clearContentList
   getExtension = (): string | undefined => this.state?.extension
 
   isFile = (): boolean => this.state?.type === 'file'

@@ -4,7 +4,7 @@ import { OpenResult } from "../state/state";
 export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
 
-    const folderContent = currentState?.contentList
+    const clearContentList = currentState?.clearContentList
     const isFile = currentState?.type === 'file'
     const name = currentState?.name
 
@@ -15,8 +15,8 @@ export default function FileExplorer() {
     })
 
     return (
-        <div className="fixed text-sm  w-[20%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
-            {folderContent && !isFile ?
+        <div className="fixed text-sm  w-[40%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
+            {clearContentList && !isFile ?
                 <div className="pl-2 text-gray-100 w-full p-0.5 hover:bg-[#203561] overflow-x-hidden">
                     {name}
                 </div>
@@ -24,8 +24,8 @@ export default function FileExplorer() {
                 <></>
             }
             {
-                folderContent && !isFile ? (
-                    folderContent.map((cont, key) =>
+                clearContentList && !isFile ? (
+                    clearContentList.map((cont, key) =>
                         <div key={key} className="pl-4 text-gray-100 w-full text-md p-0.5 hover:bg-[#203561] overflow-x-hidden">
                             {cont}
                         </div>

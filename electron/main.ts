@@ -78,13 +78,25 @@ async function openDialog(type: 'file' | 'folder') {
         return res
       }
 
+      // Clears path from /user/documents/...
+      async function clearPath(contentList: string[]): Promise<string[]> {
+        let res: string[] = []
+        for (const item of contentList) {
+          const clearPath = path.relative(openPath, item)
+          res.push(clearPath!)
+        }
+        return res
+      }
+
       const contentList = await getFolderList(openPath)
+      const clearContentList = await clearPath(contentList)
 
       appState.set({
         type: type,
         name: name!,
         path: openPath,
-        contentList: contentList
+        contentList: contentList,
+        clearContentList: clearContentList
       })
     }
   } catch (error) {

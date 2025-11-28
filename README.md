@@ -3,7 +3,7 @@
 
 ## 🧩 An open-source code editor
 No telemetry. No subscriptions. No unnecessary features.  
-Just a fast, editor built for real developers.
+Just a fast editor built for real developers.
 
 ---
 

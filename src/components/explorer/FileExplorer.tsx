@@ -1,90 +1,119 @@
-import { useEffect, useState } from "react";
-import { OpenResult } from "../../state/OpenedState";
-import ExplorerButton from "./ExplorerButton";
+import { useCallback, useEffect, useState } from "react"
+import { OpenResult } from "../../state/OpenedState"
+import ExplorerButton from "./ExplorerButton"
 
 export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
     const [showFolders, setShowFolders] = useState<boolean>(true)
+    const [orderedItems, setOrderedItems] = useState<Item[]>([]);
 
-    const foldersList = currentState?.foldersList?.map((item) => item.split('/')).sort((a, b) => a.length - b.length)
-    const filesList = currentState?.filesList?.map((item) => item.split('/')).sort((a, b) => a.length - b.length)
-    const isFile = currentState?.type === 'file'
-    const name = currentState?.name
+    const openName = currentState?.name
+
+    interface Item {
+        name: string
+        type: 'file' | 'folder'
+        parent: string
+        depth: number
+    }
+
+    const rebuildItems = useCallback(() => {
+        const items: Item[] = [];
+
+        currentState?.foldersList?.forEach((folder) => {
+            const parts = folder.split('/')
+            const name = parts.length < 2 ? parts[0] : parts[parts.length - 1]
+            const parent = parts.length < 2 ? openName : parts[parts.length - 2]
+            const depth = parts.length
+
+            items.push({
+                name,
+                type: 'folder',
+                parent: parent!,
+                depth,
+            })
+        })
+
+        currentState?.filesList?.forEach((file) => {
+            const parts = file.split('/')
+            const name = parts.length < 2 ? parts[0] : parts[parts.length - 1]
+            const parent = parts.length < 2 ? openName : parts[parts.length - 2]
+            const depth = parts.length
+
+            items.push({
+                name: name,
+                type: 'file',
+                parent: parent!,
+                depth
+            })
+        })
+        setOrderedItems(items)
+    }, [currentState, openName])
 
     useEffect(() => {
         window.electronAPI.onStateChanged((state) => {
             setCurrentState(state)
         })
-    })
+        rebuildItems()
+    }, [rebuildItems])
+
 
     const handleShowFolders = () => {
         setShowFolders(!showFolders)
-        console.log(foldersList)
     }
 
     return (
-        <div className="fixed space-y- p-1 text-sm text-gray-100 w-[40%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
-            {foldersList ?
-                <div
-                    onClick={() => handleShowFolders()}
-                    className="w-full text-md overflow-x-hidden hover:bg-[#203561] rounded-md">
-                    <p className="p-0.5">
-                        🛠️ {name}
-                    </p>
-                </div>
-                :
-                <></>
+        <div className="fixed bg-[#14213d] p-1 text-sm z-10 text-gray-100 w-[40%] mt-[6.5vh] h-screen border-x border-black select-none overflow-hidden whitespace-nowrap">
+            {
+                openName ?
+                    <div onClick={handleShowFolders}>
+                        <ExplorerButton
+                            name={openName}
+                            type='projectName'
+                            depth={0}
+                        />
+                    </div>
+                    :
+                    <></>
             }
             {
-                foldersList && showFolders ? (
+                showFolders ?
                     <>
                         {
-                            foldersList.map((folder) =>
-                                folder.length == 1 ?
-                                    <>
-                                        <ExplorerButton type='folder' name={folder[0]} />
-                                        {
-                                            filesList?.map((file) =>
-                                                folder[0] == file[0] ?
-                                                    <div className="ml-2">
-                                                        < ExplorerButton type="file" name={file[1]} />
+                            orderedItems.map((folder) => (
+                                <>
+                                    {
+                                        <>
+                                            {
+                                                folder.type == 'folder' ?
+                                                    <div>
+                                                        <ExplorerButton
+                                                            name={folder.name}
+                                                            type={'folder'}
+                                                            depth={folder.depth}
+                                                        />
+                                                        {orderedItems.map((file) =>
+                                                        (file.type == 'file' && folder.name == file.parent ?
+                                                            <ExplorerButton
+                                                                name={file.name}
+                                                                type={'file'}
+                                                                depth={file.depth}
+                                                            />
+                                                            :
+                                                            <>
+                                                            </>
+                                                        )
+                                                        )
+                                                        }
                                                     </div>
                                                     :
                                                     <></>
-                                            )
-                                        }
-                                    </>
-                                    : folder.length == 2 ?
-                                        <>
-                                            {
-                                                filesList?.map((file) =>
-                                                    folder[1] == file[0] ?
-                                                        <div className="ml-2">
-                                                            < ExplorerButton type="file" name={folder[1]} />
-                                                        </div>
-                                                        :
-                                                        <></>
-                                                )
                                             }
                                         </>
-                                        :
-                                        <></>
-                            )
-                        }
-                        {
-                            filesList?.map((file) =>
-                                file.length == 1 ?
-                                    <ExplorerButton type='file' name={file[0]} />
-                                    :
-                                    <></>
-                            )
+                                    }
+                                </>
+                            ))
                         }
                     </>
-                ) : isFile ? (
-                    <div className="pl-1 text-gray-100 w-full text-md hover:bg-[#203561] overflow-x-hidden">
-                        {name}
-                    </div>
-                )
                     :
                     <></>
             }

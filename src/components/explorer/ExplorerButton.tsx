@@ -1,9 +1,10 @@
-type Props = { name: string, type: 'file' | 'folder' }
-export default function ExplorerButton({ name, type }: Props) {
+type Props = { name: string, type: 'file' | 'folder' | 'projectName', depth: number }
+export default function ExplorerButton({ name, type, depth }: Props) {
     return (
-        <div className="ml-1.5 w-full text-md overflow-x-hidden">
+        <div style={{paddingLeft: `${depth * 8}px`}}
+        className="ml-0.5 w-full text-md overflow-x-hidden">
             <p className="p-0.5 hover:bg-[#203561] rounded-md">
-                {type == 'folder' ? "📁 " : "📄 "}
+                {type == 'folder' ? "📁 ": type == 'file' ? "📄 " : "🛠️ "}
                 {name}
             </p>
         </div>

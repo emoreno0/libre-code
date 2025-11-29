@@ -5,7 +5,7 @@ import ExplorerButton from "./ExplorerButton"
 export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
     const [showFolders, setShowFolders] = useState<boolean>(true)
-    const [orderedItems, setOrderedItems] = useState<Item[]>([]);
+    const [orderedItems, setOrderedItems] = useState<Item[]>([])
 
     const openName = currentState?.name
 
@@ -17,33 +17,26 @@ export default function FileExplorer() {
     }
 
     const rebuildItems = useCallback(() => {
-        const items: Item[] = [];
-
+        const items: Item[] = []
         currentState?.foldersList?.forEach((folder) => {
             const parts = folder.split('/')
-            const name = parts.length < 2 ? parts[0] : parts[parts.length - 1]
-            const parent = parts.length < 2 ? openName : parts[parts.length - 2]
-            const depth = parts.length
 
             items.push({
-                name,
+                name: parts.length < 2 ? parts[0] : parts[parts.length - 1],
                 type: 'folder',
-                parent: parent!,
-                depth,
+                parent: parts.length < 2 ? openName! : parts[parts.length - 2],
+                depth: parts.length
             })
         })
 
         currentState?.filesList?.forEach((file) => {
             const parts = file.split('/')
-            const name = parts.length < 2 ? parts[0] : parts[parts.length - 1]
-            const parent = parts.length < 2 ? openName : parts[parts.length - 2]
-            const depth = parts.length
 
             items.push({
-                name: name,
+                name: parts.length < 2 ? parts[0] : parts[parts.length - 1],
                 type: 'file',
-                parent: parent!,
-                depth
+                parent: parts.length < 2 ? openName! : parts[parts.length - 2],
+                depth: parts.length
             })
         })
         setOrderedItems(items)
@@ -54,7 +47,7 @@ export default function FileExplorer() {
             setCurrentState(state)
         })
         rebuildItems()
-    }, [rebuildItems])
+    }, [currentState])
 
 
     const handleShowFolders = () => {

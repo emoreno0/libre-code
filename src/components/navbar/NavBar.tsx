@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { OpenResult } from "../state/OpenedState"
-import OpenButton from "./buttons/OpenButton"
+import { OpenResult } from "../../state/OpenedState"
+import OpenButton from "./OpenButton"
 
 export default function NavBar() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)

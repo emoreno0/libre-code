@@ -66,9 +66,8 @@ async function openDialog(type: 'file' | 'folder') {
       async function getFoldersAndFilesList(dirPath: string): Promise<{
         foldersRaw: string[],
         filesRaw: string[],
-        folders: string[][],
-        files: string[][],
-        rawContentList: string[]
+        folders: string[],
+        files: string[],
       }> {
         const foldersRaw: string[] = []
         const filesRaw: string[] = []
@@ -91,19 +90,18 @@ async function openDialog(type: 'file' | 'folder') {
           }
         }
 
-        const folders = foldersRaw.map((item) => item.split('/').slice(-2))
-        const files = filesRaw.map((item) => item.split('/').slice(-2))
+        const folders = foldersRaw.map((item) => path.relative(dirPath, item))
+        const files = filesRaw.map((item) => path.relative(dirPath, item))
 
         return {
           foldersRaw,
           filesRaw,
           folders,
           files,
-          rawContentList: [...foldersRaw, ...filesRaw]
         }
       }
 
-      const { folders, files, rawContentList } = await getFoldersAndFilesList(openPath)
+      const { folders, files } = await getFoldersAndFilesList(openPath)
 
       appState.set({
         type: type,
@@ -111,7 +109,6 @@ async function openDialog(type: 'file' | 'folder') {
         path: openPath,
         foldersList: folders,
         filesList: files,
-        rawContentList: rawContentList
       })
     }
   } catch (error) {

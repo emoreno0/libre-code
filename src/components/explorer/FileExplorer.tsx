@@ -19,6 +19,7 @@ export default function FileExplorer() {
 
     const handleShowFolders = () => {
         setShowFolders(!showFolders)
+        console.log(foldersList)
     }
 
     return (

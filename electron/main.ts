@@ -1,7 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import { readdir, readdirSync } from 'node:fs'
 import { appState } from '../src/state/OpenedState'
-import path, { extname } from 'node:path'
+import path from 'node:path'
 import fs from 'node:fs/promises'
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)

@@ -9,8 +9,8 @@ let win: BrowserWindow | null = null
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 600,
-    height: 500,
+    width: 1200,
+    height: 800,
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
@@ -122,7 +122,7 @@ async function getFoldersAndFilesList(dirPath: string): Promise<{
 
 // Checks if any content has been changed in the opened folder!
 async function checkProjectUpdates() {
-  if(appState.getType() == 'file') return
+  if (appState.getType() == 'file') return
   const anteriorRawContentList = appState.getRawContentList()
   const { folders, files, rawContentList } = await getFoldersAndFilesList(appState.getPath()!)
 

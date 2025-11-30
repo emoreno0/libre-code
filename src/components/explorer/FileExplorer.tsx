@@ -6,6 +6,7 @@ export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
     const [showFolders, setShowFolders] = useState<boolean>(true)
     const [orderedItems, setOrderedItems] = useState<Item[]>([])
+    const isWindows = navigator.platform === 'Win32' || navigator.platform === 'Win64'
 
     const openName = currentState?.name
 
@@ -19,7 +20,14 @@ export default function FileExplorer() {
     const rebuildItems = useCallback(() => {
         const items: Item[] = []
         currentState?.foldersList?.forEach((folder) => {
-            const parts = folder.split('/')
+            let normalized = folder
+
+            if (isWindows && /^[A-Za-z]:[\/\\]/.test(folder)) {
+                normalized = folder.slice(3)
+            }
+
+            const parts = normalized.split(/[\\/]/).filter(Boolean)
+            if (parts.length === 0) return
 
             items.push({
                 name: parts.length < 2 ? parts[0] : parts[parts.length - 1],
@@ -30,7 +38,14 @@ export default function FileExplorer() {
         })
 
         currentState?.filesList?.forEach((file) => {
-            const parts = file.split('/')
+            let normalized = file
+
+            if (isWindows && /^[A-Za-z]:[\/\\]/.test(file)) {
+                normalized = file.slice(3)
+            }
+
+            const parts = normalized.split(/[\\/]/).filter(Boolean)
+            if (parts.length === 0) return
 
             items.push({
                 name: parts.length < 2 ? parts[0] : parts[parts.length - 1],
@@ -108,19 +123,19 @@ export default function FileExplorer() {
                                                     </div>
                                                     :
                                                     <>
-                                                    {
-                                                        item.type == 'file' && item.parent == openName ? 
-                                                        <>
-                                                            <ExplorerButton
-                                                            name={item.name}
-                                                            type={'file'}
-                                                            depth={item.depth}
-                                                        />
-                                                        </>
-                                                        :
-                                                        <>
-                                                        </>
-                                                    }
+                                                        {
+                                                            item.type == 'file' && item.parent == openName ?
+                                                                <>
+                                                                    <ExplorerButton
+                                                                        name={item.name}
+                                                                        type={'file'}
+                                                                        depth={item.depth}
+                                                                    />
+                                                                </>
+                                                                :
+                                                                <>
+                                                                </>
+                                                        }
                                                     </>
                                             }
                                         </>

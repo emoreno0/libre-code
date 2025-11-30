@@ -93,7 +93,7 @@ export default function FileExplorer() {
                                                             depth={item.depth}
                                                         />
                                                         {orderedItems.map((file) =>
-                                                        (file.type == 'file' && item.name == file.parent ?
+                                                        (file.type == 'file' && item.name == file.parent && item.depth == file.depth - 1 ?
                                                             <ExplorerButton
                                                                 name={file.name}
                                                                 type={'file'}

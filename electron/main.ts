@@ -34,6 +34,7 @@ ipcMain.handle('open-file', () => openDialog('file'))
 ipcMain.handle('open-folder', () => openDialog('folder'))
 ipcMain.handle('edit-content', (_event, content: string) => editContent(content))
 ipcMain.handle('save-file', () => saveFile())
+ipcMain.handle('check-project-updates', () => checkProjectUpdates())
 ipcMain.handle('get-app-state', () => appState.get())
 ipcMain.handle('clear-state', () => appState.clear())
 
@@ -60,47 +61,7 @@ async function openDialog(type: 'file' | 'folder') {
         extension: extension
       })
     } else {
-
-      // Returns an array of everything inside the directory path
-      async function getFoldersAndFilesList(dirPath: string): Promise<{
-        foldersRaw: string[],
-        filesRaw: string[],
-        folders: string[],
-        files: string[],
-      }> {
-        const foldersRaw: string[] = []
-        const filesRaw: string[] = []
-
-        const list = await fs.readdir(dirPath, { withFileTypes: true })
-
-        for (const item of list) {
-          const fullPath = path.join(dirPath, item.name)
-
-          if (item.isDirectory()) {
-            foldersRaw.push(fullPath)
-
-            const sub = await getFoldersAndFilesList(fullPath)
-
-            foldersRaw.push(...sub.foldersRaw)
-            filesRaw.push(...sub.filesRaw)
-
-          } else if (item.isFile()) {
-            filesRaw.push(fullPath)
-          }
-        }
-
-        const folders = foldersRaw.map((item) => path.relative(dirPath, item))
-        const files = filesRaw.map((item) => path.relative(dirPath, item))
-
-        return {
-          foldersRaw,
-          filesRaw,
-          folders,
-          files,
-        }
-      }
-
-      const { folders, files } = await getFoldersAndFilesList(openPath)
+      const { folders, files, rawContentList } = await getFoldersAndFilesList(openPath)
 
       appState.set({
         type: type,
@@ -108,10 +69,72 @@ async function openDialog(type: 'file' | 'folder') {
         path: openPath,
         foldersList: folders,
         filesList: files,
+        rawContentList: rawContentList
       })
     }
   } catch (error) {
     console.error(`Error al abrir ${type}:`, error)
+  }
+}
+
+// Returns an array of everything inside the directory path
+async function getFoldersAndFilesList(dirPath: string): Promise<{
+  rawContentList: string
+  foldersRaw: string[],
+  filesRaw: string[],
+  folders: string[],
+  files: string[],
+}> {
+  const foldersRaw: string[] = []
+  const filesRaw: string[] = []
+
+  const list = await fs.readdir(dirPath, { withFileTypes: true })
+
+  for (const item of list) {
+    const fullPath = path.join(dirPath, item.name)
+
+    if (item.isDirectory()) {
+      foldersRaw.push(fullPath)
+
+      const sub = await getFoldersAndFilesList(fullPath)
+
+      foldersRaw.push(...sub.foldersRaw)
+      filesRaw.push(...sub.filesRaw)
+
+    } else if (item.isFile()) {
+      filesRaw.push(fullPath)
+    }
+  }
+
+  const folders = foldersRaw.map((item) => path.relative(dirPath, item))
+  const files = filesRaw.map((item) => path.relative(dirPath, item))
+
+  const rawContentList = foldersRaw.join(filesRaw.toString())
+
+  return {
+    foldersRaw,
+    filesRaw,
+    folders,
+    files,
+    rawContentList,
+  }
+}
+
+// Checks if any content has been changed in the opened folder!
+async function checkProjectUpdates() {
+  if(appState.getType() == 'file') return
+  const anteriorRawContentList = appState.getRawContentList()
+  const { folders, files, rawContentList } = await getFoldersAndFilesList(appState.getPath()!)
+
+  if (rawContentList == anteriorRawContentList) {
+    return
+  } else {
+    appState.set({
+      ...appState.get()!,
+      foldersList: folders,
+      filesList: files,
+      rawContentList: rawContentList
+    })
   }
 }
 

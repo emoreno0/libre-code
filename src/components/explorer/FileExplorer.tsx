@@ -49,6 +49,14 @@ export default function FileExplorer() {
         rebuildItems()
     }, [currentState])
 
+    useEffect(() => {
+        if (currentState?.type == 'folder') {
+            const checkUpdates = () => window.electronAPI.checkProjectUpdates()
+            const intervalo = setInterval(checkUpdates, 5000)
+
+            return () => clearInterval(intervalo)
+        }
+    }, [])
 
     const handleShowFolders = () => {
         setShowFolders(!showFolders)
@@ -99,7 +107,8 @@ export default function FileExplorer() {
                                                         }
                                                     </div>
                                                     :
-                                                    <></>
+                                                    <>
+                                                    </>
                                             }
                                         </>
                                     }

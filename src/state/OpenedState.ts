@@ -4,10 +4,11 @@ export type OpenResult = {
   type: 'file' | 'folder'
   path: string
   name: string
+  extension?: string
   content?: string
   foldersList?: string[]
   filesList?: string[]
-  extension?: string
+  rawContentList?: string
 }
 
 class AppState {
@@ -28,6 +29,7 @@ class AppState {
   getContent = (): string | undefined => this.state?.content
   getFoldersList = (): string[] | undefined => this.state?.foldersList
   getFilesList = (): string[] | undefined => this.state?.filesList
+  getRawContentList = (): string | undefined => this.state?.rawContentList
   getExtension = (): string | undefined => this.state?.extension
 
   isFile = (): boolean => this.state?.type === 'file'

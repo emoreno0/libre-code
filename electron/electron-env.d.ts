@@ -10,6 +10,7 @@ declare global {
       getAppState: () => Promise<OpenResult | null>
       clearState: () => Promise<void>
       openConfig: () => Promise<void>
+      checkProjectUpdates: () => Promise<void>
       onStateChanged: (callback: (state: OpenResult | null) => void) => void
     }
   }

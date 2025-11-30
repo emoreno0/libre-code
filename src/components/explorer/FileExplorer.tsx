@@ -80,20 +80,20 @@ export default function FileExplorer() {
                 showFolders ?
                     <>
                         {
-                            orderedItems.map((folder) => (
+                            orderedItems.map((item) => (
                                 <>
                                     {
                                         <>
                                             {
-                                                folder.type == 'folder' ?
+                                                item.type == 'folder' ?
                                                     <div>
                                                         <ExplorerButton
-                                                            name={folder.name}
+                                                            name={item.name}
                                                             type={'folder'}
-                                                            depth={folder.depth}
+                                                            depth={item.depth}
                                                         />
                                                         {orderedItems.map((file) =>
-                                                        (file.type == 'file' && folder.name == file.parent ?
+                                                        (file.type == 'file' && item.name == file.parent ?
                                                             <ExplorerButton
                                                                 name={file.name}
                                                                 type={'file'}
@@ -108,6 +108,19 @@ export default function FileExplorer() {
                                                     </div>
                                                     :
                                                     <>
+                                                    {
+                                                        item.type == 'file' && item.parent == openName ? 
+                                                        <>
+                                                            <ExplorerButton
+                                                            name={item.name}
+                                                            type={'file'}
+                                                            depth={item.depth}
+                                                        />
+                                                        </>
+                                                        :
+                                                        <>
+                                                        </>
+                                                    }
                                                     </>
                                             }
                                         </>

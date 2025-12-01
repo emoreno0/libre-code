@@ -7,7 +7,7 @@ export default function OpenButton({ onClick, type }: Props) {
     return (
         <button
             onClick={onClick}
-            className={`min-h-12 w-full hover:bg-[#203561] text-sm text-gray-100`}
+            className='min-h-12 w-full hover:bg-[#203561] text-sm text-gray-100'
         >
             <div>
                 {

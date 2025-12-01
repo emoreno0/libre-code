@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { OpenResult } from "../../state/OpenedState"
-import OpenButton from "./OpenButton"
+import { useEffect, useState } from 'react'
+import { OpenResult } from '../../state/OpenedState'
+import OpenButton from './OpenButton'
 
 export default function NavBar() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
@@ -19,43 +19,41 @@ export default function NavBar() {
 
     return (
         <div
-            className="fixed min-h-[6vh] max-h-[8vh] min-w-full bg-[#14213d] border border-black z-3 overflow-y-hidden"
-            style={{ resize: "vertical" }}
+            className='fixed min-w-[50px] max-w-[50px] min-h-screen bg-[#14213d] border-r border-black z-3 overflow-x-hidden'
+            style={{ resize: 'horizontal' }}
         >
-            <div className="flex h-full justify-between">
-                <div>
+            <div className='flex flex-col h-screen'>
+                <OpenButton
+                    onClick={openFile}
+                    type='file'
+                />
+                <OpenButton
+                    onClick={openFolder}
+                    type='folder'
+                />
+                {
+                    currentState?.type == 'file' ?
+                        <OpenButton
+                            onClick={saveFile}
+                            type='save'
+                        />
+                        :
+                        <></>
+                }
+                {
+                    currentState?.path ?
+                        <OpenButton
+                            onClick={clearState}
+                            type='remove'
+                        />
+                        :
+                        <></>
+                }
+                <div className='mt-auto'>
                     <OpenButton
-                        onClick={openFile}
-                        text='Open File'
-                    />
-                    <OpenButton
-                        onClick={openFolder}
-                        text='Open Folder'
-                    />
-                    {
-                        currentState?.type == 'file' ?
-                            <OpenButton
-                                onClick={saveFile}
-                                text='Save'
-                            />
-                            :
-                            <></>
-                    }
-                    {
-                        currentState?.path ?
-                            <OpenButton
-                                onClick={clearState}
-                                text='Remove'
-                            />
-                            :
-                            <></>
-                    }
-                </div>
-                <div>
-                    <OpenButton
-                        onClick={openConfig}
-                        text="Config"
-                    />
+                    onClick={openConfig}
+                    type='config'
+                />
                 </div>
             </div>
         </div>

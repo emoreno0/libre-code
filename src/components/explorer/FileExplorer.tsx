@@ -80,16 +80,16 @@ export default function FileExplorer() {
 
     return (
         <div
-            className="fixed min-w-fit max-w-[200px] bg-[#14213d] p-1 text-sm z-2 text-gray-100 h-screen border-x border-black select-none overflow-x-auto whitespace-nowrap"
+            className="fixed ml-[50px] min-w-[175px] max-w-[175px] bg-[#14213d] p-1 text-sm z-2 text-gray-100 h-screen border-r border-black select-none overflow-x-auto whitespace-nowrap"
             style={{ resize: 'horizontal' }}
         >
-            <div className="flex h-full items-center">
-                <div className="block">
+            <div className="flex w-full h-full">
+                <div className="w-full">
                     {
                         openName ?
                             <div onClick={handleShowFolders}>
                                 <ExplorerButton
-                                    isProjectFolder={true}
+                                    isProjectFolder={type == 'folder' ? true : false}
                                     type={type!}
                                     name={openName}
                                     depth={0}

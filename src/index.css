@@ -2,7 +2,7 @@
 
 :root {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-        background: #14213d;
+    user-select: none;
 }
 
 :root::-webkit-scrollbar {

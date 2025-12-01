@@ -18,8 +18,11 @@ export default function NavBar() {
     })
 
     return (
-        <div className="fixed w-screen h-[6.5vh] border border-black z-10 select-none">
-            <div className="flex justify-between h-full items-center">
+        <div
+            className="fixed min-h-[6vh] max-h-[8vh] min-w-full bg-[#14213d] border border-black z-3 overflow-y-hidden"
+            style={{ resize: "vertical" }}
+        >
+            <div className="flex h-full justify-between">
                 <div>
                     <OpenButton
                         onClick={openFile}
@@ -39,7 +42,7 @@ export default function NavBar() {
                             <></>
                     }
                     {
-                        currentState?.path  ?
+                        currentState?.path ?
                             <OpenButton
                                 onClick={clearState}
                                 text='Remove'
@@ -48,7 +51,7 @@ export default function NavBar() {
                             <></>
                     }
                 </div>
-                <div className="pr-2">
+                <div>
                     <OpenButton
                         onClick={openConfig}
                         text="Config"

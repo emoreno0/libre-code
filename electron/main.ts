@@ -160,7 +160,7 @@ async function saveFile() {
 app.whenReady().then(createWindow)
 
 // Opens Config Window
-ipcMain.on("open-config", () => {
+ipcMain.on('open-config', () => {
   const configWin = new BrowserWindow({
     width: 600,
     height: 400,

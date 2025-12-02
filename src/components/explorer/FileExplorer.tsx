@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react"
-import { OpenResult } from "../../state/OpenedState"
-import ExplorerButton from "./ExplorerButton"
+import { useCallback, useEffect, useState } from 'react'
+import { OpenResult } from '../../state/OpenedState'
+import ExplorerButton from './ExplorerButton'
 
 export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
@@ -75,19 +75,23 @@ export default function FileExplorer() {
     }, [])
 
     const handleShowFolders = () => {
+        if (type == 'file') {
+            return
+        } else {
         setShowFolders(!showFolders)
+        }
     }
 
     return (
         <div
-            className="fixed ml-[50px] min-w-[175px] max-w-[175px] bg-[#14213d] p-1 text-sm z-2 text-gray-100 h-screen border-r border-black select-none overflow-x-auto whitespace-nowrap"
+            className='fixed ml-[50px] min-w-[175px] max-w-[175px] bg-[#14213d] p-1 text-sm z-2 text-gray-100 h-screen border-r border-black select-none overflow-x-auto whitespace-nowrap'
             style={{ resize: 'horizontal' }}
         >
-            <div className="flex w-full h-full">
-                <div className="w-full">
+            <div className='flex w-full h-full'>
+                <div className='w-full'>
                     {
                         openName ?
-                            <div onClick={handleShowFolders}>
+                            <div onClick={type == 'folder' ? () => handleShowFolders() : () => { }}>
                                 <ExplorerButton
                                     isProjectFolder={type == 'folder' ? true : false}
                                     type={type!}

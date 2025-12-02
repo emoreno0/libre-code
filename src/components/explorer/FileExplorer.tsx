@@ -6,7 +6,7 @@ export default function FileExplorer() {
     const [currentState, setCurrentState] = useState<OpenResult | null>(null)
     const [showFolders, setShowFolders] = useState<boolean>(true)
     const [orderedItems, setOrderedItems] = useState<Item[]>([])
-    const [hiddenSubItems, setHiddenSubItems] = useState<(Subitems[])>([])
+    const [hiddenSubitems, setHiddenSubitems] = useState<Subitems[]>([])
     const isWindows = navigator.platform === 'Win32' || navigator.platform === 'Win64'
 
     const openName = currentState?.name
@@ -69,6 +69,7 @@ export default function FileExplorer() {
             setCurrentState(state)
         })
         rebuildItems()
+        setHiddenSubitems([])
     }, [currentState])
 
     useEffect(() => {
@@ -88,13 +89,12 @@ export default function FileExplorer() {
         }
     }
 
-    const handleShowSubfolders = (folder: string, depth: number) => {
-        if (hiddenSubItems.find(item => item.parent == folder && item.num == depth)) {
-            setHiddenSubItems(prev => prev.filter(item => !(item.parent === folder && item.num == depth)))
+    const handleShowSubitems = (parent: string, num: number) => {
+        if (hiddenSubitems.find(f => f.parent == parent && f.num == num)) {
+            setHiddenSubitems(prev => prev.filter(item => !(item.parent == parent && item.num == num)))
         } else {
-            setHiddenSubItems(prev => [...prev, { parent: folder, num: depth }])
+            setHiddenSubitems(prev => [...prev, { parent: parent, num: num }])
         }
-        console.log(hiddenSubItems)
     }
 
     return (
@@ -124,26 +124,30 @@ export default function FileExplorer() {
                                     orderedItems.map((item) => (
                                         <>
                                             {
-                                                item.type == 'folder' ?
-                                                    <div onClick={() => handleShowSubfolders(item.name, item.depth)}>
-                                                        <ExplorerButton
-                                                            name={item.name}
-                                                            type={'folder'}
-                                                            depth={item.depth}
-                                                        />
-                                                        {orderedItems.map((file) =>
-                                                        (file.type == 'file' &&
-                                                            item.name == file.parent &&
-                                                            item.depth == file.depth - 1 &&
-                                                            !hiddenSubItems.find(i => i.parent == file.parent && i.num == file.depth - 1) ?
+                                                item.type == 'folder' &&
+                                                    !hiddenSubitems.find(sub => sub.parent == item.parent && sub.num == item.depth - 1) ?
+                                                    <div>
+                                                        <div onClick={() => { handleShowSubitems(item.name, item.depth) }}>
                                                             <ExplorerButton
-                                                                name={file.name}
-                                                                type={'file'}
-                                                                depth={file.depth}
+                                                                name={item.name}
+                                                                type={'folder'}
+                                                                depth={item.depth}
                                                             />
-                                                            :
-                                                            <>
-                                                            </>
+                                                        </div>
+                                                        {orderedItems.map((file) =>
+                                                        (
+                                                            file.type == 'file' &&
+                                                                item.name == file.parent &&
+                                                                item.depth == file.depth - 1 &&
+                                                                !hiddenSubitems.find(sub => sub.parent == file.parent && sub.num == file.depth - 1) ?
+                                                                <ExplorerButton
+                                                                    name={file.name}
+                                                                    type={'file'}
+                                                                    depth={file.depth}
+                                                                />
+                                                                :
+                                                                <>
+                                                                </>
                                                         )
                                                         )
                                                         }
@@ -151,7 +155,8 @@ export default function FileExplorer() {
                                                     :
                                                     <>
                                                         {
-                                                            item.type == 'file' && item.parent == openName ?
+                                                            item.type == 'file' &&
+                                                                item.parent == openName ?
                                                                 <>
                                                                     <ExplorerButton
                                                                         name={item.name}

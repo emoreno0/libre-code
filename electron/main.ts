@@ -77,6 +77,37 @@ async function openDialog(type: 'file' | 'folder') {
   }
 }
 
+// List of folders to ignore!
+const foldersToIgnore = new Set ([
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+  "out",
+  "target",
+  "vendor",
+  ".next",
+  ".nuxt",
+  ".svelte-kit",
+  ".astro",
+  ".cache",
+  ".turbo",
+  ".vercel",
+  ".yarn",
+  ".pnp",
+  "coverage",
+  ".nyc_output",
+  ".gradle",
+  ".idea",
+  "logs",
+  "log",
+  "tmp",
+  "temp",
+  ".tmp",
+  ".output",
+  "bower_components",
+])
+
 // Returns an array of everything inside the directory path
 async function getFoldersAndFilesList(dirPath: string): Promise<{
   rawContentList: string[]
@@ -96,11 +127,12 @@ async function getFoldersAndFilesList(dirPath: string): Promise<{
     if (item.isDirectory()) {
       foldersRaw.push(fullPath)
 
-      const sub = await getFoldersAndFilesList(fullPath)
+      if (!foldersToIgnore.has(item.name)) {
+        const sub = await getFoldersAndFilesList(fullPath)
 
-      foldersRaw.push(...sub.foldersRaw)
-      filesRaw.push(...sub.filesRaw)
-
+        foldersRaw.push(...sub.foldersRaw)
+        filesRaw.push(...sub.filesRaw)
+      }
     } else if (item.isFile()) {
       filesRaw.push(fullPath)
     }
@@ -109,7 +141,7 @@ async function getFoldersAndFilesList(dirPath: string): Promise<{
   const folders = foldersRaw.map((item) => path.relative(dirPath, item))
   const files = filesRaw.map((item) => path.relative(dirPath, item))
 
-  const rawContentList = [...foldersRaw,...filesRaw]
+  const rawContentList = [...foldersRaw, ...filesRaw]
 
   return {
     foldersRaw,

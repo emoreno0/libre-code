@@ -7,13 +7,13 @@
 }
 
 *::-webkit-scrollbar {
-    width: 0.85em;
-    height: 0.85em;
+    width: 0.5em;
+    height: 0.5em;
 }
 
 *::-webkit-scrollbar-thumb {
     background: #DEDFE4;
-    border-radius: 0.5em;
+    border-radius: 0.25em;
 }
 
 .no-scrollbar::-webkit-scrollbar {

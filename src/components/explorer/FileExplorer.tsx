@@ -78,17 +78,17 @@ export default function FileExplorer() {
         if (type == 'file') {
             return
         } else {
-        setShowFolders(!showFolders)
+            setShowFolders(!showFolders)
         }
     }
 
     return (
         <div
-            className='fixed ml-[50px] min-w-[175px] max-w-[175px] bg-[#14213d] p-1 text-sm z-2 text-gray-100 h-screen border-r border-black select-none overflow-x-auto whitespace-nowrap'
+            className='fixed bg-[#14213d] z-2 text-gray-100 ml-[50px] h-full border-r border-black'
             style={{ resize: 'horizontal' }}
         >
-            <div className='flex w-full h-full'>
-                <div className='w-full'>
+            <div className='flex h-full min-w-[175px] max-w-[175px] p-0.5 text-sm overflow-auto'>
+                <div className='w-full h-full'>
                     {
                         openName ?
                             <div onClick={type == 'folder' ? () => handleShowFolders() : () => { }}>

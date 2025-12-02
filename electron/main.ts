@@ -79,7 +79,7 @@ async function openDialog(type: 'file' | 'folder') {
 
 // Returns an array of everything inside the directory path
 async function getFoldersAndFilesList(dirPath: string): Promise<{
-  rawContentList: string
+  rawContentList: string[]
   foldersRaw: string[],
   filesRaw: string[],
   folders: string[],
@@ -109,7 +109,7 @@ async function getFoldersAndFilesList(dirPath: string): Promise<{
   const folders = foldersRaw.map((item) => path.relative(dirPath, item))
   const files = filesRaw.map((item) => path.relative(dirPath, item))
 
-  const rawContentList = foldersRaw.join(filesRaw.toString())
+  const rawContentList = [...foldersRaw,...filesRaw]
 
   return {
     foldersRaw,

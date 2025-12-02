@@ -8,7 +8,7 @@ export type OpenResult = {
   content?: string
   foldersList?: string[]
   filesList?: string[]
-  rawContentList?: string
+  rawContentList?: string[]
 }
 
 class AppState {
@@ -29,7 +29,7 @@ class AppState {
   getContent = (): string | undefined => this.state?.content
   getFoldersList = (): string[] | undefined => this.state?.foldersList
   getFilesList = (): string[] | undefined => this.state?.filesList
-  getRawContentList = (): string | undefined => this.state?.rawContentList
+  getRawContentList = (): string[] | undefined => this.state?.rawContentList
   getExtension = (): string | undefined => this.state?.extension
 
   isFile = (): boolean => this.state?.type === 'file'

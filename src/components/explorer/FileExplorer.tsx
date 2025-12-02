@@ -72,7 +72,7 @@ export default function FileExplorer() {
 
             return () => clearInterval(interval)
         }
-    }, [])
+    })
 
     const handleShowFolders = () => {
         if (type == 'file') {

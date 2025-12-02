@@ -6,33 +6,47 @@ export default function CodeEditor() {
     const [value, setValue] = useState("")
 
     useEffect(() => {
-        window.electronAPI.onStateChanged((state) => {
+        const unsubscribe = window.electronAPI.onStateChanged((state) => {
             setCurrentState(state)
-            setValue(state?.content ?? "")
+            if (state?.type === "file") {
+                setValue(state.content ?? "")
+            }
         })
-        window.electronAPI.editContent(value)
-    }, [value])
+        return () => unsubscribe
+    }, [])
+
+    useEffect(() => {
+        if (!currentState || currentState.type !== "file") return
+
+        const timeoutId = setTimeout(() => {
+            window.electronAPI.editContent(value)
+        }, 300)
+
+        return () => clearTimeout(timeoutId)
+    }, [value, currentState])
 
     const lineCount = value.split("\n").length
 
     return (
-        <div className="min-h-[200vh] bg-[#1a2949] text-sm text-gray-100 ml-[225px] pt-2 pl-2 overflow-x-scroll">
+        <div className="min-h-screen bg-[#1a2949] text-md text-gray-100 ml-[225px] overflow-hidden">
             {
                 currentState?.type == 'file' ?
-                    <div className="flex">
-                        <div className="block select-none">
+                    <div className="flex w-full h-screen">
+                        <div className="block select-non px-1">
                             {Array.from({ length: lineCount }).map((_, i) => (
                                 <div key={i}>
                                     {i + 1}
                                 </div>
                             ))}
                         </div>
-                        <textarea
-                            className="min-w-fit w-screen select-text focus:outline-none pl-2 resize-none"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            spellCheck={false}
-                        />
+                        <div className="w-full px-1">
+                            <textarea
+                                className="min-w-full min-h-screen h-fit w-fit select-text focus:outline-none resize-none whitespace-nowrap"
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)}
+                                spellCheck={false}
+                            />
+                        </div>
                     </div>
                     :
                     <></>

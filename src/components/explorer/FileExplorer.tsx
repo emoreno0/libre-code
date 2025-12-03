@@ -69,7 +69,6 @@ export default function FileExplorer() {
             setCurrentState(state)
         })
         rebuildItems()
-        setHiddenSubitems([])
     }, [currentState])
 
     useEffect(() => {
@@ -78,8 +77,10 @@ export default function FileExplorer() {
             const interval = setInterval(checkUpdates, 5000)
 
             return () => clearInterval(interval)
+        } else if(!currentState) {
+            setHiddenSubitems([])
         }
-    })
+    },[currentState])
 
     const handleShowFolders = () => {
         if (type == 'file') {

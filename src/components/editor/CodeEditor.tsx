@@ -28,26 +28,24 @@ export default function CodeEditor() {
     const lineCount = value.split('\n').length
 
     return (
-        <div className='min-h-screen bg-[#1a2949] text-md text-gray-100 ml-[225px] overflow-hidden'>
+        <div className='min-h-screen text-md text-gray-100 pl-[225px]'>
             {
                 currentState?.type == 'file' ?
-                    <div className='flex w-full h-screen'>
-                        <div className='block select-non px-1'>
+                    <div className='flex bg-[#1a2949] min-h-full overflow-x-hidden'>
+                        <div className='block px-1'>
                             {Array.from({ length: lineCount }).map((_, i) => (
                                 <div key={i}>
                                     {i + 1}
                                 </div>
                             ))}
                         </div>
-                        <div className='w-full px-1'>
                             <textarea
-                                className='min-w-full min-h-screen h-fit w-fit select-text focus:outline-none resize-none whitespace-nowrap'
+                                className='min-w-full select-text focus:outline-none resize-none whitespace-nowrap'
                                 value={value}
                                 onChange={(e) => setValue(e.target.value)}
                                 spellCheck={false}
                             />
                         </div>
-                    </div>
                     :
                     <></>
             }

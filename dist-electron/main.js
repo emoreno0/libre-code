@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { ipcMain, dialog, app, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -12,7 +12,6 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
     }
@@ -24,6 +23,18 @@ function createWindow() {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
+  }
+}
+ipcMain.handle("open-file", () => openDialog("file"));
+ipcMain.handle("open-folder", () => openDialog("folder"));
+async function openDialog(type) {
+  try {
+    const res = dialog.showOpenDialog(win, {
+      properties: type === "file" ? ["openFile"] : ["openDirectory"]
+    });
+    console.log((await res).filePaths);
+  } catch (error) {
+    console.log(error);
   }
 }
 app.on("window-all-closed", () => {

@@ -1,4 +1,4 @@
-import { ipcMain, dialog, app, BrowserWindow } from "electron";
+import { ipcMain, dialog, BrowserWindow, app } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -37,6 +37,20 @@ async function openDialog(type) {
     console.log(error);
   }
 }
+ipcMain.on("open-config", () => {
+  const configWin = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      preload: path.join(__dirname$1, "preload.mjs")
+    }
+  });
+  if (VITE_DEV_SERVER_URL) {
+    configWin.loadURL("http://localhost:5173/config.html");
+  } else {
+    configWin.loadFile(path.join(RENDERER_DIST, "config.html"));
+  }
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

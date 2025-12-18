@@ -50,6 +50,23 @@ async function openDialog(type: 'file' | 'folder') {
   }
 }
 
+// Opens config window!
+ipcMain.on('open-config', () => {
+  const configWin = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.mjs'),
+    },
+  })
+
+  if (VITE_DEV_SERVER_URL) {
+    configWin.loadURL('http://localhost:5173/config.html')
+  } else {
+    configWin.loadFile(path.join(RENDERER_DIST, 'config.html'))
+  }
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()

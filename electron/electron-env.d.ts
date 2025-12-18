@@ -5,6 +5,7 @@ declare global {
     electronAPI: {
       openFile: () => Promise<void>
       openFolder: () => Promise<void>
+      openConfig: () => Promise<void>
     }
   }
 }

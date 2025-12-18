@@ -1,9 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -59,6 +57,8 @@ ipcMain.on('open-config', () => {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
+
+  configWin.setMenu(null)
 
   if (VITE_DEV_SERVER_URL) {
     configWin.loadURL('http://localhost:5173/config.html')

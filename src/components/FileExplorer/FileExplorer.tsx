@@ -1,7 +1,7 @@
 
 export default function FileExplorer() {
   return (
-    <div className="w-[150px] h-full min-h-screen bg-blue-700 border-r-2 border-black">
+    <div className="w-[150px] h-full min-h-screen border-r border-black">
         FileExplorer
     </div>
   )

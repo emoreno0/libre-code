@@ -1,7 +1,7 @@
 
 export default function Config() {
   return (
-    <div className="text-black">
+    <div className="h-screen text-white">
         Config
     </div>
   )

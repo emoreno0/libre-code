@@ -6,20 +6,20 @@ export default function NavBar() {
   const openConfig = () => window.electronAPI.openConfig()
 
   return (
-    <div className="bg-blue-500 h-screen w-[75px] border-r-2 border-black">
+    <div className="h-screen w-[75px] border-r border-black">
       <div className="flex flex-col h-screen">
         <NavBarButton
         onClick={openFile}
-        type="file"
+        icon="file"
       />
       <NavBarButton
         onClick={openFolder}
-        type="folder"
+        icon="folder"
       />
       <div className="mt-auto">
         <NavBarButton
         onClick={openConfig}
-        type="config"
+        icon="gear"
       />
       </div>
       </div>

@@ -2,5 +2,6 @@
 
 :root {
   background-color: white;
-  color: black;
+  color: white;
+  user-select: none;
 }

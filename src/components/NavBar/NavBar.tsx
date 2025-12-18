@@ -7,18 +7,22 @@ export default function NavBar() {
 
   return (
     <div className="bg-blue-500 h-screen w-[75px] border-r-2 border-black">
-      <NavBarButton
+      <div className="flex flex-col h-screen">
+        <NavBarButton
         onClick={openFile}
-        text="File"
+        type="file"
       />
       <NavBarButton
         onClick={openFolder}
-        text="Folder"
+        type="folder"
       />
-      <NavBarButton
+      <div className="mt-auto">
+        <NavBarButton
         onClick={openConfig}
-        text="Config"
+        type="config"
       />
+      </div>
+      </div>
     </div>
   )
 }

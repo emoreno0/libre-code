@@ -1,4 +1,4 @@
-import { ipcMain, dialog, BrowserWindow, app } from "electron";
+import { ipcMain, dialog, BrowserWindow, app, Menu } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 const __dirname$1 = path.dirname(fileURLToPath(import.meta.url));
@@ -14,9 +14,59 @@ function createWindow() {
       preload: path.join(__dirname$1, "preload.mjs")
     }
   });
-  win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
+  const menuTemplate = [
+    {
+      label: "File",
+      submenu: [
+        {
+          label: "Open File",
+          accelerator: "CmdOrCtrl+F",
+          click: () => openDialog("file")
+        },
+        {
+          label: "Open Folder",
+          accelerator: "CmdOrCtrl+D",
+          click: () => openDialog("folder")
+        },
+        {
+          type: "separator"
+        },
+        {
+          role: "quit"
+        }
+      ]
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "selectAll" }
+      ]
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forceReload" },
+        { role: "toggleDevTools" },
+        { type: "separator" },
+        { role: "togglefullscreen" }
+      ]
+    },
+    {
+      role: "windowMenu"
+    },
+    {
+      label: "Help"
+    }
+  ];
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {

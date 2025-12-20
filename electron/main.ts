@@ -21,6 +21,7 @@ function createWindow() {
     },
   })
 
+  // App menu!
   const menuTemplate: MenuItemConstructorOptions[] = [
     {
       label: 'File',

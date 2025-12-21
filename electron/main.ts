@@ -1,6 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { appState } from '../src/state/State'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -94,7 +95,12 @@ async function openDialog(type: 'file' | 'folder') {
     const res = dialog.showOpenDialog(win!, {
       properties: type === 'file' ? ['openFile'] : ['openDirectory']
     })
-    console.log((await res).filePaths)
+
+    appState.set({
+      ...appState.get()!,
+      path: (await res).filePaths[0]
+    })
+
   } catch (error) {
     console.log(error)
   }

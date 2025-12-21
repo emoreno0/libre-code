@@ -6,6 +6,7 @@ declare global {
       openFile: () => Promise<void>
       openFolder: () => Promise<void>
       openConfig: () => Promise<void>
+      onStateChanged: (callback: (_e, state) => void) => void
     }
   }
 }

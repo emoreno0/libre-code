@@ -9,15 +9,24 @@ export default function FileExplorer() {
       setCurrentState(state)
     })
   })
-  
 
   return (
-    <div className="w-[150px] h-full min-h-screen border-r border-black">
-        FileExplorer
-
-        <button onClick={() => console.log(currenState?.path)}>
-          Print Path
-        </button>
+    <div className="w-[200px] h-full min-h-screen border-r border-black">
+      {
+        currenState ?
+          <>
+            <p>
+              {currenState.type}
+            </p>
+            <p>
+              {currenState.path}
+            </p>
+            <p>
+              {currenState.name}
+            </p>
+          </>
+          : <></>
+      }
     </div>
   )
 }

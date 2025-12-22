@@ -1,6 +1,8 @@
 import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import fs from 'node:fs/promises'
+
 import { appState } from '../src/state/State'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -96,10 +98,34 @@ async function openDialog(type: 'file' | 'folder') {
       properties: type === 'file' ? ['openFile'] : ['openDirectory']
     })
 
-    appState.set({
-      ...appState.get()!,
-      path: (await res).filePaths[0]
-    })
+    const openedPath = (await res).filePaths[0]
+    const name = path.basename(openedPath)
+
+    if(openedPath != appState.getPath()) {
+      appState.clear()
+    }
+
+    if (type == 'file') {
+      const content = await fs.readFile(openedPath, 'utf-8')
+
+      appState.set({
+        ...appState.get()!,
+        type: type,
+        path: openedPath,
+        name: name,
+        content: content
+      })
+
+    } else if (type == 'folder') {
+
+      appState.set({
+        ...appState.get()!,
+        type: type,
+        path: openedPath,
+        name: name
+      })
+
+    }
 
   } catch (error) {
     console.log(error)

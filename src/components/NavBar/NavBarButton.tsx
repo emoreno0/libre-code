@@ -1,6 +1,6 @@
 type Props = {
   onClick: () => {},
-  icon: 'file' | 'folder' | 'gear'
+  icon: 'file' | 'folder' | 'gear' | 'delete-left' | 'floppy-disk'
 }
 
 export default function NavBarButton({ onClick, icon }: Props) {

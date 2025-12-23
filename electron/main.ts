@@ -90,6 +90,8 @@ function createWindow() {
 // Handlers!
 ipcMain.handle('open-file', () => openDialog('file'))
 ipcMain.handle('open-folder', () => openDialog('folder'))
+ipcMain.handle('clear-state', () => appState.clear())
+ipcMain.handle('save-content', () => saveContent())
 
 // Opens dialog!
 async function openDialog(type: 'file' | 'folder') {
@@ -130,6 +132,11 @@ async function openDialog(type: 'file' | 'folder') {
   } catch (error) {
     console.log(error)
   }
+}
+
+// Saves content!
+async function saveContent() {
+  console.log('Content saved!')
 }
 
 // Opens config window!

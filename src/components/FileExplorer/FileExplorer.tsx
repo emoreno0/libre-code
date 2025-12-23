@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { StateType } from "../../state/State"
 
 export default function FileExplorer() {
-  const [currenState, setCurrentState] = useState<StateType | null>()
+  const [currentState, setCurrentState] = useState<StateType | null>()
 
   useEffect(() => {
     window.electronAPI.onStateChanged((state) => {
@@ -13,16 +13,16 @@ export default function FileExplorer() {
   return (
     <div className="w-[200px] h-full min-h-screen border-r border-black">
       {
-        currenState ?
+        currentState ?
           <>
             <p>
-              {currenState.type}
+              {currentState.type}
             </p>
             <p>
-              {currenState.path}
+              {currentState.path}
             </p>
             <p>
-              {currenState.name}
+              {currentState.name}
             </p>
           </>
           : <></>

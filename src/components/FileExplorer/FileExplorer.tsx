@@ -24,6 +24,19 @@ export default function FileExplorer() {
             <p>
               {currentState.name}
             </p>
+            {
+              currentState.type == 'folder' ? 
+              <>
+              {
+                currentState.fileList
+              }
+              {
+                currentState.folderList
+              }
+              </>
+              :
+              <></>
+            }
           </>
           : <></>
       }

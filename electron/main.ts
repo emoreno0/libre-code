@@ -103,7 +103,7 @@ async function openDialog(type: 'file' | 'folder') {
     const openedPath = (await res).filePaths[0]
     const name = path.basename(openedPath)
 
-    if(openedPath != appState.getPath()) {
+    if (openedPath != appState.getPath()) {
       appState.clear()
     }
 
@@ -119,18 +119,52 @@ async function openDialog(type: 'file' | 'folder') {
       })
 
     } else if (type == 'folder') {
+      const {fileList, folderList} = await getFilesAndFolders(openedPath)
 
       appState.set({
         ...appState.get()!,
         type: type,
         path: openedPath,
-        name: name
+        name: name,
+        fileList: fileList,
+        folderList: folderList
       })
 
     }
 
   } catch (error) {
     console.log(error)
+  }
+}
+
+// Returns files & folders!
+async function getFilesAndFolders(dirPath: string): Promise<{
+  fileList: string[]
+  folderList: string[]
+}> {
+  const fileList: string[] = []
+  const folderList: string[] = []
+
+  const list = await fs.readdir(dirPath, { withFileTypes: true })
+
+  for (const item of list) {
+    const fullPath = path.join(dirPath, item.name)
+
+    if (item.isDirectory()) {
+      folderList.push(fullPath)
+
+      const sub = await getFilesAndFolders(fullPath)
+
+      fileList.push(...sub.fileList)
+      folderList.push(...sub.folderList)
+    } else if (item.isFile()) {
+      fileList.push(fullPath)
+    }
+  }
+
+  return {
+    fileList,
+    folderList
   }
 }
 

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
-import { appState } from '../src/state/State'
+import { appState, dirElement } from '../src/state/State'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -119,53 +119,51 @@ async function openDialog(type: 'file' | 'folder') {
       })
 
     } else if (type == 'folder') {
-      const {fileList, folderList} = await getFilesAndFolders(openedPath)
+      const dirElements = await getFilesAndFolders(openedPath)
 
       appState.set({
         ...appState.get()!,
         type: type,
         path: openedPath,
         name: name,
-        fileList: fileList,
-        folderList: folderList
+        dirElements: dirElements
       })
-
     }
-
   } catch (error) {
     console.log(error)
   }
 }
 
 // Returns files & folders!
-async function getFilesAndFolders(dirPath: string): Promise<{
-  fileList: string[]
-  folderList: string[]
-}> {
-  const fileList: string[] = []
-  const folderList: string[] = []
+async function getFilesAndFolders(dirPath: string): Promise<dirElement[]> {
+  const dirEl: dirElement[] = []
 
   const list = await fs.readdir(dirPath, { withFileTypes: true })
 
   for (const item of list) {
     const fullPath = path.join(dirPath, item.name)
 
+    const element: dirElement = {
+      type: item.isFile() ? 'file' : 'folder',
+      path: fullPath,
+      name: item.name,
+      parent: item.parentPath,
+      depth: fullPath.split(path.sep).length,
+    }
+
     if (item.isDirectory()) {
-      folderList.push(fullPath)
+      dirEl.push(element)
 
-      const sub = await getFilesAndFolders(fullPath)
+      if (!foldersToIgnore.has(item.name)) {
+        const sub = await getFilesAndFolders(fullPath)
 
-      fileList.push(...sub.fileList)
-      folderList.push(...sub.folderList)
+        dirEl.push(...sub)
+      }
     } else if (item.isFile()) {
-      fileList.push(fullPath)
+      dirEl.push(element)
     }
   }
-
-  return {
-    fileList,
-    folderList
-  }
+  return dirEl
 }
 
 // Saves content!
@@ -191,6 +189,76 @@ ipcMain.on('open-config', () => {
     configWin.loadFile(path.join(RENDERER_DIST, 'config.html'))
   }
 })
+
+// Folders to ignore!
+export const foldersToIgnore = new Set([
+  ".git",
+  ".svn",
+  ".hg",
+  ".bzr",
+  "node_modules",
+  "vendor",
+  "bower_components",
+  "jspm_packages",
+  "libs",
+  "packages",
+  "dist",
+  "build",
+  "out",
+  "target",
+  "bin",
+  "obj",
+  "Debug",
+  "Release",
+  ".next",
+  ".nuxt",
+  "www",
+  "public/build",
+  "coverage",
+  ".cache",
+  ".parcel-cache",
+  ".npm",
+  ".yarn/cache",
+  ".eslintcache",
+  "__pycache__",
+  ".pytest_cache",
+  ".ruff_cache",
+  ".mypy_cache",
+  ".swc",
+  ".svelte-kit",
+  ".idea",
+  ".vscode",
+  ".vs",
+  ".code-workspace",
+  ".project",
+  ".classpath",
+  ".settings",
+  ".factorypath",
+  ".eclipse",
+  ".sublime-project",
+  ".sublime-workspace",
+  ".DS_Store",
+  "Thumbs.db",
+  "ehthumbs.db",
+  ".Trashes",
+  ".Spotlight-V100",
+  ".fseventsd",
+  "logs",
+  "log",
+  "tmp",
+  "temp",
+  ".nyc_output",
+  ".sass-cache",
+  ".bundle",
+  "venv",
+  ".env",
+  ".env.local",
+  ".env.development",
+  ".env.test",
+  ".env.production",
+  "dist-zip",
+  "release"
+])
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

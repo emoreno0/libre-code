@@ -11,32 +11,20 @@ export default function FileExplorer() {
   })
 
   return (
-    <div className="w-[200px] h-full min-h-screen border-r border-black">
+    <div className="w-[200px] h-full min-h-screen border-r border-black pl-2">
       {
         currentState ?
           <>
             <p>
-              {currentState.type}
-            </p>
-            <p>
-              {currentState.path}
-            </p>
-            <p>
               {currentState.name}
             </p>
-            {
-              currentState.type == 'folder' ? 
-              <>
-              {
-                currentState.fileList
-              }
-              {
-                currentState.folderList
-              }
-              </>
-              :
-              <></>
-            }
+            <br />
+            { currentState.dirElements?.map((el) => (
+              <p>
+                <i className={`fa-xl fa-solid fa-${el.type} p-1`}></i>
+                {el.name}
+              </p>
+            ))}
           </>
           : <></>
       }

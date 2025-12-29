@@ -14,11 +14,11 @@ export default function CodeEditor() {
     <div className="h-full min-h-screen w-full">
       {
         currentState ?
-          <>
-            {
-              currentState.content
-            }
-          </>
+          <pre>
+            <code>
+              {currentState.content}
+            </code>
+          </pre>
           : <></>
       }
     </div>

@@ -18,7 +18,7 @@ export default function NavBar() {
   })
 
   return (
-    <div className="h-screen w-[75px] border-r border-black">
+    <div className="fixed h-screen w-14 border-r border-black">
       <div className="flex flex-col h-screen">
         <NavBarButton
           onClick={openFile}

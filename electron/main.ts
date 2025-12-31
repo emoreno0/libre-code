@@ -6,17 +6,14 @@ import fs from 'node:fs/promises'
 import { appState, dirElement } from '../src/state/State'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-
 process.env.APP_ROOT = path.join(__dirname, '..')
-
 export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
-
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
 
+// App Window!
 function createWindow() {
   win = new BrowserWindow({
     webPreferences: {
@@ -24,7 +21,7 @@ function createWindow() {
     },
   })
 
-  // App menu!
+  // App Menu!
   const menuTemplate: MenuItemConstructorOptions[] = [
     {
       label: 'File',
@@ -117,7 +114,6 @@ async function openDialog(type: 'file' | 'folder') {
         name: name,
         content: content
       })
-
     } else if (type == 'folder') {
       const dirElements = await getFilesAndFolders(openedPath)
 
@@ -137,7 +133,6 @@ async function openDialog(type: 'file' | 'folder') {
 // Returns files & folders!
 async function getFilesAndFolders(dirPath: string): Promise<dirElement[]> {
   const dirEl: dirElement[] = []
-
   const list = await fs.readdir(dirPath, { withFileTypes: true })
 
   for (const item of list) {
@@ -150,13 +145,11 @@ async function getFilesAndFolders(dirPath: string): Promise<dirElement[]> {
       parent: item.parentPath,
       depth: fullPath.split(path.sep).length,
     }
-
     if (item.isDirectory()) {
       dirEl.push(element)
 
       if (!foldersToIgnore.has(item.name)) {
         const sub = await getFilesAndFolders(fullPath)
-
         dirEl.push(...sub)
       }
     } else if (item.isFile()) {
@@ -167,7 +160,7 @@ async function getFilesAndFolders(dirPath: string): Promise<dirElement[]> {
 }
 
 // Saves content!
-async function saveContent() {
+function saveContent() {
   console.log('Content saved!')
 }
 
@@ -191,7 +184,7 @@ ipcMain.on('open-config', () => {
 })
 
 // Folders to ignore!
-export const foldersToIgnore = new Set([
+const foldersToIgnore = new Set([
   ".git",
   ".svn",
   ".hg",

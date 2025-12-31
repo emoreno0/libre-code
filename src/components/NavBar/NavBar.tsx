@@ -40,8 +40,7 @@ export default function NavBar() {
               icon="floppy-disk"
             />
             </>
-            :
-            <></>
+            : <></>
         }
         <div className="mt-auto">
           <NavBarButton

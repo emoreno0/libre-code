@@ -5,10 +5,11 @@ export type StateType = {
     name: string
     path: string
     content?: string
-    dirElements?: dirElement[]
+    folderList?: DirElement[]
+    fileList?: DirElement[]
 }
 
-export type dirElement = {
+export type DirElement = {
     type: 'file' | 'folder'
     path: string
     name: string
@@ -32,7 +33,8 @@ class AppState {
     getName = (): String | undefined => this.state?.name
     getPath = (): String | undefined => this.state?.path
     getContent = (): String | undefined => this.state?.content
-    getDirElements = (): dirElement[] | undefined => this.state?.dirElements
+    getFolderList = (): DirElement[] | undefined => this.state?.folderList
+    getFileList = (): DirElement[] | undefined => this.state?.fileList
 
     clear() {
         this.state = null

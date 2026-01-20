@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
-import { appState, dirElement } from '../src/state/State'
+import { appState, DirElement } from '../src/state/State'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -115,14 +115,15 @@ async function openDialog(type: 'file' | 'folder') {
         content: content
       })
     } else if (type == 'folder') {
-      const dirElements = await getFilesAndFolders(openedPath)
+      const { folderList, fileList } = await getFilesAndFolders(openedPath)
 
       appState.set({
         ...appState.get()!,
         type: type,
         path: openedPath,
         name: name,
-        dirElements: dirElements
+        folderList: folderList,
+        fileList: fileList
       })
     }
   } catch (error) {
@@ -131,32 +132,34 @@ async function openDialog(type: 'file' | 'folder') {
 }
 
 // Returns files & folders!
-async function getFilesAndFolders(dirPath: string): Promise<dirElement[]> {
-  const dirEl: dirElement[] = []
+async function getFilesAndFolders(dirPath: string): Promise<{ folderList: DirElement[], fileList: DirElement[] }> {
+  const folderList: DirElement[] = []
+  const fileList: DirElement[] = []
   const list = await fs.readdir(dirPath, { withFileTypes: true })
 
   for (const item of list) {
     const fullPath = path.join(dirPath, item.name)
 
-    const element: dirElement = {
-      type: item.isFile() ? 'file' : 'folder',
+    const element: DirElement = {
+      type: item.isDirectory() ? 'folder' : 'file',
       path: fullPath,
       name: item.name,
       parent: item.parentPath,
       depth: fullPath.split(path.sep).length,
     }
     if (item.isDirectory()) {
-      dirEl.push(element)
+      folderList.push(element)
 
       if (!foldersToIgnore.has(item.name)) {
         const sub = await getFilesAndFolders(fullPath)
-        dirEl.push(...sub)
+        folderList.push(...sub.folderList)
+        fileList.push(...sub.fileList)
       }
     } else if (item.isFile()) {
-      dirEl.push(element)
+      fileList.push(element)
     }
   }
-  return dirEl
+  return { folderList, fileList }
 }
 
 // Saves content!

@@ -26,7 +26,7 @@ export default function FileExplorer() {
                     currentState.folderList?.map((el) => (
                       <>
                         <p className="hover:bg-gray-600 p-1" style={{ paddingLeft: `${el.depth * el.depth - 45}px` }}>
-                          <i className={`fa-md fa-solid fa-${'folder'} p-1 pl-3`}></i>
+                          <i className={`fa-md fa-solid fa-folder p-1 pl-3`}></i>
                           {el.name}
                         </p>
                         {
@@ -52,7 +52,7 @@ export default function FileExplorer() {
                         {
                           el.parent == currentState.path ?
                             <p className="hover:bg-gray-600 p-1" style={{ paddingLeft: `${el.depth * el.depth - 45}px` }}>
-                              <i className={`fa-md fa-solid fa-${'file'} p-1 pl-3`}></i>
+                              <i className={`fa-md fa-solid fa-file p-1 pl-3`}></i>
                               {el.name}
                             </p>
                             : <></>

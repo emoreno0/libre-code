@@ -35,7 +35,7 @@ export default function FileExplorer() {
                               {
                                 el.path == sub.parent ?
                                   <p className="hover:bg-gray-600 p-1" style={{ paddingLeft: `${sub.depth * sub.depth - 45}px` }}>
-                                    <i className={`fa-md fa-solid fa-${sub.type} p-1 pl-3`}></i>
+                                    <i className={`fa-md fa-solid fa-file p-1 pl-3`}></i>
                                     {sub.name}
                                   </p>
                                   : <></>

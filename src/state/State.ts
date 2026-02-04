@@ -10,7 +10,6 @@ export type StateType = {
 }
 
 export type DirElement = {
-    type: 'file' | 'folder'
     path: string
     name: string
     parent: string

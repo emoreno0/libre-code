@@ -141,7 +141,6 @@ async function getFilesAndFolders(dirPath: string): Promise<{ folderList: DirEle
     const fullPath = path.join(dirPath, item.name)
 
     const element: DirElement = {
-      type: item.isDirectory() ? 'folder' : 'file',
       path: fullPath,
       name: item.name,
       parent: item.parentPath,

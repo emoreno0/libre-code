@@ -3,14 +3,29 @@ import { StateType } from "../../state/State"
 
 export default function CodeEditor() {
   const [currentState, setCurrentState] = useState<StateType | null>()
+  const [editedText, setEditedText] = useState<String>()
   const [lines, setLines] = useState(Number)
 
   useEffect(() => {
     window.electronAPI.onStateChanged((state) => {
       setCurrentState(state)
     })
-    setLines(currentState?.content ? currentState.content.split("\n").length : 0)
   })
+
+  useEffect(() => {
+    setLines(currentState?.content ? currentState.content.split("\n").length : 0)
+  }, [currentState?.content])
+
+  useEffect(() => {
+    if (editedText) {
+      setLines(editedText?.split("\n").length)
+    }
+  }, [editedText])
+
+
+  const handleEditedText = (e: string) => {
+    setEditedText(e)
+  }
 
   return (
     <div className="h-full min-h-screen w-full">
@@ -26,11 +41,14 @@ export default function CodeEditor() {
                 ))
               }
             </div>
-            <pre>
-              <code>
-                {currentState.content}
-              </code>
-            </pre>
+            <textarea
+              className="w-full min-h-screen mx-2 resize-none outline-none"
+              onChange={(e) => handleEditedText(e.target.value)}
+              suppressContentEditableWarning
+              contentEditable
+            >
+              {currentState.content}
+            </textarea>
           </div>
           : <></>
       }

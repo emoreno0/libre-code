@@ -22,7 +22,6 @@ export default function CodeEditor() {
     }
   }, [editedText])
 
-
   const handleEditedText = (e: string) => {
     setEditedText(e)
   }
